@@ -80,10 +80,6 @@ export class KodiClient {
       id: ++this.requestId,
     };
 
-    console.log('KodiClient.call - endpoint:', this.endpoint);
-    console.log('KodiClient.call - request:', request);
-    console.log('KodiClient.call - headers:', this.getHeaders());
-
     try {
       const response = await fetch(this.endpoint, {
         method: 'POST',
@@ -92,19 +88,12 @@ export class KodiClient {
         signal,
       });
 
-      console.log('KodiClient.call - response:', response);
-      console.log('KodiClient.call - response.ok:', response.ok);
-      console.log('KodiClient.call - response.status:', response.status);
-      console.log('KodiClient.call - response.statusText:', response.statusText);
-
       if (!response.ok) {
         const text = await response.text();
-        console.error('KodiClient.call - error response body:', text);
         throw new Error(`HTTP error! status: ${String(response.status)} - ${text}`);
       }
 
       const data = (await response.json()) as JsonRpcResponse<T>;
-      console.log('KodiClient.call - response data:', data);
 
       if (data.error) {
         throw new KodiError(data.error.message, data.error.code, data.error.data);
@@ -121,10 +110,6 @@ export class KodiClient {
       if (error instanceof DOMException && error.name === 'AbortError') {
         throw error;
       }
-
-      console.error('KodiClient.call - caught error:', error);
-      console.error('KodiClient.call - error type:', error?.constructor?.name);
-      console.error('KodiClient.call - error message:', error instanceof Error ? error.message : String(error));
 
       if (error instanceof KodiError) {
         throw error;

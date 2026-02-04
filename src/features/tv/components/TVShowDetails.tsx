@@ -1,4 +1,4 @@
-import { useParams, Link } from '@tanstack/react-router';
+import { useParams, Link, Outlet, useMatches } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { useTVShowDetails } from '@/api/hooks/useTVShowDetails';
 import { useSeasons } from '@/api/hooks/useSeasons';
@@ -14,9 +14,18 @@ import { getFanartUrl, getClearLogoUrl } from '@/lib/image-utils';
 export function TVShowDetails() {
   const { tvshowId } = useParams({ strict: false });
   const tvshowIdNum = parseInt(tvshowId, 10);
+  const matches = useMatches();
+
+  // Check if we're on a child route (season or episode)
+  const isOnChildRoute = matches.some((match) => match.routeId.includes('/$season'));
 
   const { data: tvshow, isLoading, isError, error } = useTVShowDetails(tvshowIdNum);
   const { data: seasons, isLoading: isLoadingSeasons } = useSeasons(tvshowIdNum);
+
+  // If we're on a child route, just render the outlet
+  if (isOnChildRoute) {
+    return <Outlet />;
+  }
 
   if (isLoading) {
     return (

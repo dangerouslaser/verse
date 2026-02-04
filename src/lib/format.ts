@@ -3,8 +3,8 @@
  */
 
 /**
- * Format runtime in minutes to human-readable string
- * @param runtime Runtime in minutes
+ * Format runtime in seconds to human-readable string
+ * @param runtime Runtime in seconds
  * @returns Formatted string like "2h 15m" or "45m"
  */
 export function formatRuntime(runtime?: number): string {
@@ -12,8 +12,10 @@ export function formatRuntime(runtime?: number): string {
     return '';
   }
 
-  const hours = Math.floor(runtime / 60);
-  const minutes = runtime % 60;
+  // Convert seconds to minutes
+  const totalMinutes = Math.floor(runtime / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
 
   if (hours === 0) {
     return `${String(minutes)}m`;

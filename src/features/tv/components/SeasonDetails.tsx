@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MediaImage } from '@/components/media/MediaImage';
 import { EpisodeList } from './EpisodeList';
-import { getFanartUrl } from '@/lib/image-utils';
+import { getFanartUrl, getClearLogoUrl } from '@/lib/image-utils';
 
 export function SeasonDetails() {
   const { tvshowId, season } = useParams({ strict: false });
-  const tvshowIdNum = parseInt(tvshowId, 10);
-  const seasonNum = parseInt(season, 10);
+
+  const tvshowIdNum = tvshowId ? parseInt(tvshowId, 10) : 0;
+  const seasonNum = season ? parseInt(season, 10) : 0;
 
   const { data: tvshow, isLoading: isLoadingShow } = useTVShowDetails(tvshowIdNum);
   const {
@@ -20,6 +21,17 @@ export function SeasonDetails() {
     isError,
     error,
   } = useEpisodesBySeason(tvshowIdNum, seasonNum);
+
+  if (!tvshowId || !season) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="border-destructive bg-destructive/10 rounded-lg border p-6">
+          <h2 className="text-destructive mb-2 text-lg font-semibold">Error loading season</h2>
+          <p className="text-muted-foreground text-sm">Invalid params.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoadingShow || isLoadingEpisodes) {
     return (
@@ -61,6 +73,7 @@ export function SeasonDetails() {
   }
 
   const fanartUrl = getFanartUrl(tvshow.art);
+  const clearLogoUrl = getClearLogoUrl(tvshow.art);
   const totalEpisodes = episodes.length;
   const watchedEpisodes = episodes.filter((ep) => ep.playcount && ep.playcount > 0).length;
 
@@ -78,6 +91,17 @@ export function SeasonDetails() {
             className="h-full w-full"
           />
           <div className="from-background via-background/80 absolute inset-0 bg-gradient-to-t to-transparent" />
+
+          {/* Clearlogo overlay */}
+          {clearLogoUrl && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <img
+                src={clearLogoUrl}
+                alt={tvshow.title}
+                className="max-h-[40%] max-w-[80%] object-contain drop-shadow-2xl"
+              />
+            </div>
+          )}
         </div>
       )}
 

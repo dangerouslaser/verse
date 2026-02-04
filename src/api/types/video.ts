@@ -111,7 +111,6 @@ export interface KodiEpisode extends KodiMediaBase {
   writer?: string[];
   cast?: KodiCast[];
   firstaired?: string;
-  premiered?: string;
   plot?: string;
   file?: string;
   streamdetails?: KodiStreamDetails;
@@ -309,7 +308,6 @@ export const EPISODE_PROPERTIES = [
   'writer',
   'cast',
   'firstaired',
-  'premiered',
   'plot',
   'file',
   'streamdetails',
