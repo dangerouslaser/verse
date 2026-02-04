@@ -1,12 +1,75 @@
-.idea
-.sass-cache
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+.pnp
+.pnp.js
 /vendor
-/node_modules
 .bundle/
-npm-debug.log
-/tutorial
-atlassian-ide-plugin.xml
-dist/js/build/*
-*.mo
-.vscode
+
+# Testing
+coverage
+*.lcov
+.nyc_output
+
+# Build outputs
+dist
+dist-ssr
+*.local
+
+# Legacy build files
+legacy/dist/js/build/*
 webinterface.default*.zip
+*.mo
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+atlassian-ide-plugin.xml
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Temporary files
+*.tmp
+*.temp
+.cache
+.sass-cache
+/tutorial
+
+# OS files
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Husky
+.husky/_
+
+# MCP
+.mcp.json

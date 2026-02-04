@@ -1,0 +1,7 @@
+dist
+legacy
+node_modules
+coverage
+*.log
+package-lock.json
+.mcp.json
