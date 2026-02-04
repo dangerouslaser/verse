@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTVShowsInfinite } from '@/api/hooks/useTVShows';
 import { TVShowCard } from './TVShowCard';
+import { TVShowListItem } from './TVShowListItem';
+import { ViewToggle } from '@/components/media/ViewToggle';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import {
@@ -10,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useViewMode } from '@/hooks/useViewMode';
 import { Search } from 'lucide-react';
 import type { KodiSort, KodiFilter } from '@/api/types/common';
 
@@ -17,6 +20,7 @@ export function TVShowList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('title');
+  const [viewMode, setViewMode] = useViewMode('tvshows', 'grid');
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -121,18 +125,21 @@ export function TVShowList() {
       <div className="mb-8 space-y-4">
         <h1 className="text-4xl font-bold">TV Shows</h1>
 
-        {/* Search */}
-        <div className="relative max-w-md">
-          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-          <Input
-            type="text"
-            placeholder="Search TV shows..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-            }}
-            className="pl-10"
-          />
+        {/* Search and View Toggle */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative max-w-md flex-1">
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <Input
+              type="text"
+              placeholder="Search TV shows..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+              }}
+              className="pl-10"
+            />
+          </div>
+          <ViewToggle value={viewMode} onChange={setViewMode} />
         </div>
 
         {/* Filters */}
@@ -170,18 +177,26 @@ export function TVShowList() {
         </p>
       </div>
 
-      {/* TV Shows Grid */}
+      {/* TV Shows Grid/List */}
       {tvshows.length === 0 ? (
         <div className="py-12 text-center">
           <p className="text-muted-foreground text-lg">No TV shows found</p>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-            {tvshows.map((tvshow) => (
-              <TVShowCard key={tvshow.tvshowid} tvshow={tvshow} />
-            ))}
-          </div>
+          {viewMode === 'grid' ? (
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              {tvshows.map((tvshow) => (
+                <TVShowCard key={tvshow.tvshowid} tvshow={tvshow} />
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {tvshows.map((tvshow) => (
+                <TVShowListItem key={tvshow.tvshowid} tvshow={tvshow} />
+              ))}
+            </div>
+          )}
 
           {/* Loading indicator */}
           <div ref={observerTarget} className="mt-8 flex justify-center">

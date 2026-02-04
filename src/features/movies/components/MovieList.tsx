@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { VirtualGrid } from '@/components/media/VirtualGrid';
 import { MediaCardSkeletonGrid } from '@/components/media/MediaCardSkeleton';
 import { Input } from '@/components/ui/input';
 import {
@@ -10,22 +9,19 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { MovieCard } from './MovieCard';
+import { MovieListItem } from './MovieListItem';
+import { ViewToggle } from '@/components/media/ViewToggle';
 import { useMoviesInfinite } from '@/api/hooks/useMoviesInfinite';
 import { useMovieFilters } from '../hooks/useMovieFilters';
+import { useViewMode } from '@/hooks/useViewMode';
 import { Search, Loader2 } from 'lucide-react';
 
 export function MovieList() {
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useMoviesInfinite();
+  const { data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useMoviesInfinite();
 
   const observerTarget = useRef<HTMLDivElement>(null);
+  const [viewMode, setViewMode] = useViewMode('movies', 'grid');
 
   // Flatten all pages into a single array
   const allMovies = data?.pages.flatMap((page) => page.movies) || [];
@@ -38,7 +34,7 @@ export function MovieList() {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
+          void fetchNextPage();
         }
       },
       { threshold: 0.1 }
@@ -60,8 +56,8 @@ export function MovieList() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 space-y-4">
-          <div className="h-10 w-full max-w-md animate-pulse rounded-lg bg-muted" />
-          <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
+          <div className="bg-muted h-10 w-full max-w-md animate-pulse rounded-lg" />
+          <div className="bg-muted h-8 w-48 animate-pulse rounded-lg" />
         </div>
         <MediaCardSkeletonGrid count={20} />
       </div>
@@ -71,9 +67,9 @@ export function MovieList() {
   if (isError) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="rounded-lg border border-destructive bg-destructive/10 p-6">
-          <h2 className="mb-2 text-lg font-semibold text-destructive">Error loading movies</h2>
-          <p className="text-sm text-muted-foreground">
+        <div className="border-destructive bg-destructive/10 rounded-lg border p-6">
+          <h2 className="text-destructive mb-2 text-lg font-semibold">Error loading movies</h2>
+          <p className="text-muted-foreground text-sm">
             {error instanceof Error ? error.message : 'An unknown error occurred'}
           </p>
         </div>
@@ -81,10 +77,10 @@ export function MovieList() {
     );
   }
 
-  if (!allMovies || allMovies.length === 0) {
+  if (allMovies.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="rounded-lg border bg-muted/50 p-12 text-center">
+        <div className="bg-muted/50 rounded-lg border p-12 text-center">
           <h2 className="mb-2 text-xl font-semibold">No movies found</h2>
           <p className="text-muted-foreground">Your movie library is empty.</p>
         </div>
@@ -99,22 +95,27 @@ export function MovieList() {
         <h1 className="mb-2 text-3xl font-bold">Movies</h1>
         <p className="text-muted-foreground">
           {filteredCount} {filteredCount === 1 ? 'movie' : 'movies'}
-          {filteredCount !== totalCount && ` of ${totalCount} total`}
+          {filteredCount !== totalCount && ` of ${String(totalCount)} total`}
         </p>
       </div>
 
       {/* Filters */}
       <div className="mb-6 space-y-4">
-        {/* Search */}
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search movies..."
-            value={filters.search}
-            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-            className="pl-10"
-          />
+        {/* Search and View Toggle */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative max-w-md flex-1">
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <Input
+              type="search"
+              placeholder="Search movies..."
+              value={filters.search}
+              onChange={(e) => {
+                setFilters({ ...filters, search: e.target.value });
+              }}
+              className="pl-10"
+            />
+          </div>
+          <ViewToggle value={viewMode} onChange={setViewMode} />
         </div>
 
         {/* Filters row */}
@@ -123,9 +124,9 @@ export function MovieList() {
           {genres.length > 0 && (
             <Select
               value={filters.genre || 'all-genres'}
-              onValueChange={(value) =>
-                setFilters({ ...filters, genre: value === 'all-genres' ? undefined : value })
-              }
+              onValueChange={(value) => {
+                setFilters({ ...filters, genre: value === 'all-genres' ? undefined : value });
+              }}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="All genres" />
@@ -144,7 +145,9 @@ export function MovieList() {
           {/* Sort by */}
           <Select
             value={filters.sortBy}
-            onValueChange={(value: any) => setFilters({ ...filters, sortBy: value })}
+            onValueChange={(value) => {
+              setFilters({ ...filters, sortBy: value });
+            }}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue />
@@ -160,7 +163,9 @@ export function MovieList() {
           {/* Sort order */}
           <Select
             value={filters.sortOrder}
-            onValueChange={(value: any) => setFilters({ ...filters, sortOrder: value })}
+            onValueChange={(value) => {
+              setFilters({ ...filters, sortOrder: value });
+            }}
           >
             <SelectTrigger className="w-[140px]">
               <SelectValue />
@@ -173,19 +178,27 @@ export function MovieList() {
         </div>
       </div>
 
-      {/* Movie grid */}
+      {/* Movie grid/list */}
       {filteredMovies.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-            {filteredMovies.map((movie) => (
-              <MovieCard key={movie.movieid} movie={movie} />
-            ))}
-          </div>
+          {viewMode === 'grid' ? (
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+              {filteredMovies.map((movie) => (
+                <MovieCard key={movie.movieid} movie={movie} />
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {filteredMovies.map((movie) => (
+                <MovieListItem key={movie.movieid} movie={movie} />
+              ))}
+            </div>
+          )}
 
           {/* Infinite scroll trigger */}
           <div ref={observerTarget} className="flex justify-center py-8">
             {isFetchingNextPage && (
-              <div className="flex items-center space-x-2 text-muted-foreground">
+              <div className="text-muted-foreground flex items-center space-x-2">
                 <Loader2 className="h-6 w-6 animate-spin" />
                 <span>Loading more movies...</span>
               </div>
@@ -193,11 +206,9 @@ export function MovieList() {
           </div>
         </>
       ) : (
-        <div className="rounded-lg border bg-muted/50 p-12 text-center">
+        <div className="bg-muted/50 rounded-lg border p-12 text-center">
           <h2 className="mb-2 text-xl font-semibold">No results found</h2>
-          <p className="text-muted-foreground">
-            Try adjusting your search or filter criteria.
-          </p>
+          <p className="text-muted-foreground">Try adjusting your search or filter criteria.</p>
         </div>
       )}
     </div>

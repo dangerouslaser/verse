@@ -24,11 +24,14 @@ export function SeasonList({ seasons, tvshowId }: SeasonListProps) {
         const watchedEpisodes = season.watchedepisodes || 0;
         const progress = totalEpisodes > 0 ? (watchedEpisodes / totalEpisodes) * 100 : 0;
 
+        const linkParams = { tvshowId: String(tvshowId), season: String(season.season) };
+
         return (
           <Link
             key={season.seasonid}
             to="/tv/$tvshowId/$season"
-            params={{ tvshowId: String(tvshowId), season: String(season.season) }}
+            params={linkParams}
+            className="block"
           >
             <Card className="group cursor-pointer overflow-hidden transition-transform duration-300 hover:scale-105">
               <CardContent className="p-0">
