@@ -15,6 +15,8 @@ import { Route as SettingsIndexRouteImport } from './routes/settings/index';
 import { Route as MoviesIndexRouteImport } from './routes/movies/index';
 import { Route as TvTvshowIdRouteImport } from './routes/tv/$tvshowId';
 import { Route as MoviesMovieIdRouteImport } from './routes/movies/$movieId';
+import { Route as TvTvshowIdSeasonRouteImport } from './routes/tv/$tvshowId/$season';
+import { Route as TvTvshowIdSeasonEpisodeIdRouteImport } from './routes/tv/$tvshowId/$season/$episodeId';
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,44 +48,85 @@ const MoviesMovieIdRoute = MoviesMovieIdRouteImport.update({
   path: '/movies/$movieId',
   getParentRoute: () => rootRouteImport,
 } as any);
+const TvTvshowIdSeasonRoute = TvTvshowIdSeasonRouteImport.update({
+  id: '/$season',
+  path: '/$season',
+  getParentRoute: () => TvTvshowIdRoute,
+} as any);
+const TvTvshowIdSeasonEpisodeIdRoute = TvTvshowIdSeasonEpisodeIdRouteImport.update({
+  id: '/$episodeId',
+  path: '/$episodeId',
+  getParentRoute: () => TvTvshowIdSeasonRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
   '/movies/$movieId': typeof MoviesMovieIdRoute;
-  '/tv/$tvshowId': typeof TvTvshowIdRoute;
+  '/tv/$tvshowId': typeof TvTvshowIdRouteWithChildren;
   '/movies/': typeof MoviesIndexRoute;
   '/settings/': typeof SettingsIndexRoute;
   '/tv/': typeof TvIndexRoute;
+  '/tv/$tvshowId/$season': typeof TvTvshowIdSeasonRouteWithChildren;
+  '/tv/$tvshowId/$season/$episodeId': typeof TvTvshowIdSeasonEpisodeIdRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
   '/movies/$movieId': typeof MoviesMovieIdRoute;
-  '/tv/$tvshowId': typeof TvTvshowIdRoute;
+  '/tv/$tvshowId': typeof TvTvshowIdRouteWithChildren;
   '/movies': typeof MoviesIndexRoute;
   '/settings': typeof SettingsIndexRoute;
   '/tv': typeof TvIndexRoute;
+  '/tv/$tvshowId/$season': typeof TvTvshowIdSeasonRouteWithChildren;
+  '/tv/$tvshowId/$season/$episodeId': typeof TvTvshowIdSeasonEpisodeIdRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   '/': typeof IndexRoute;
   '/movies/$movieId': typeof MoviesMovieIdRoute;
-  '/tv/$tvshowId': typeof TvTvshowIdRoute;
+  '/tv/$tvshowId': typeof TvTvshowIdRouteWithChildren;
   '/movies/': typeof MoviesIndexRoute;
   '/settings/': typeof SettingsIndexRoute;
   '/tv/': typeof TvIndexRoute;
+  '/tv/$tvshowId/$season': typeof TvTvshowIdSeasonRouteWithChildren;
+  '/tv/$tvshowId/$season/$episodeId': typeof TvTvshowIdSeasonEpisodeIdRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/movies/$movieId' | '/tv/$tvshowId' | '/movies/' | '/settings/' | '/tv/';
+  fullPaths:
+    | '/'
+    | '/movies/$movieId'
+    | '/tv/$tvshowId'
+    | '/movies/'
+    | '/settings/'
+    | '/tv/'
+    | '/tv/$tvshowId/$season'
+    | '/tv/$tvshowId/$season/$episodeId';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/movies/$movieId' | '/tv/$tvshowId' | '/movies' | '/settings' | '/tv';
-  id: '__root__' | '/' | '/movies/$movieId' | '/tv/$tvshowId' | '/movies/' | '/settings/' | '/tv/';
+  to:
+    | '/'
+    | '/movies/$movieId'
+    | '/tv/$tvshowId'
+    | '/movies'
+    | '/settings'
+    | '/tv'
+    | '/tv/$tvshowId/$season'
+    | '/tv/$tvshowId/$season/$episodeId';
+  id:
+    | '__root__'
+    | '/'
+    | '/movies/$movieId'
+    | '/tv/$tvshowId'
+    | '/movies/'
+    | '/settings/'
+    | '/tv/'
+    | '/tv/$tvshowId/$season'
+    | '/tv/$tvshowId/$season/$episodeId';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   MoviesMovieIdRoute: typeof MoviesMovieIdRoute;
-  TvTvshowIdRoute: typeof TvTvshowIdRoute;
+  TvTvshowIdRoute: typeof TvTvshowIdRouteWithChildren;
   MoviesIndexRoute: typeof MoviesIndexRoute;
   SettingsIndexRoute: typeof SettingsIndexRoute;
   TvIndexRoute: typeof TvIndexRoute;
@@ -133,13 +176,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MoviesMovieIdRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/tv/$tvshowId/$season': {
+      id: '/tv/$tvshowId/$season';
+      path: '/$season';
+      fullPath: '/tv/$tvshowId/$season';
+      preLoaderRoute: typeof TvTvshowIdSeasonRouteImport;
+      parentRoute: typeof TvTvshowIdRoute;
+    };
+    '/tv/$tvshowId/$season/$episodeId': {
+      id: '/tv/$tvshowId/$season/$episodeId';
+      path: '/$episodeId';
+      fullPath: '/tv/$tvshowId/$season/$episodeId';
+      preLoaderRoute: typeof TvTvshowIdSeasonEpisodeIdRouteImport;
+      parentRoute: typeof TvTvshowIdSeasonRoute;
+    };
   }
 }
+
+interface TvTvshowIdSeasonRouteChildren {
+  TvTvshowIdSeasonEpisodeIdRoute: typeof TvTvshowIdSeasonEpisodeIdRoute;
+}
+
+const TvTvshowIdSeasonRouteChildren: TvTvshowIdSeasonRouteChildren = {
+  TvTvshowIdSeasonEpisodeIdRoute: TvTvshowIdSeasonEpisodeIdRoute,
+};
+
+const TvTvshowIdSeasonRouteWithChildren = TvTvshowIdSeasonRoute._addFileChildren(
+  TvTvshowIdSeasonRouteChildren
+);
+
+interface TvTvshowIdRouteChildren {
+  TvTvshowIdSeasonRoute: typeof TvTvshowIdSeasonRouteWithChildren;
+}
+
+const TvTvshowIdRouteChildren: TvTvshowIdRouteChildren = {
+  TvTvshowIdSeasonRoute: TvTvshowIdSeasonRouteWithChildren,
+};
+
+const TvTvshowIdRouteWithChildren = TvTvshowIdRoute._addFileChildren(TvTvshowIdRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MoviesMovieIdRoute: MoviesMovieIdRoute,
-  TvTvshowIdRoute: TvTvshowIdRoute,
+  TvTvshowIdRoute: TvTvshowIdRouteWithChildren,
   MoviesIndexRoute: MoviesIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   TvIndexRoute: TvIndexRoute,
