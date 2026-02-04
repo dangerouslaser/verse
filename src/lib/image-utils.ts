@@ -95,6 +95,17 @@ export function getThumbUrl(art?: KodiArt): string | undefined {
 }
 
 /**
+ * Get the clearlogo image from art object
+ */
+export function getClearLogoUrl(art?: KodiArt): string | undefined {
+  if (!art) {
+    return undefined;
+  }
+
+  return getImageUrl(art.clearlogo) || getImageUrl(art.clearart) || undefined;
+}
+
+/**
  * Generate a placeholder image URL for when images fail to load
  */
 export function getPlaceholderUrl(type: 'poster' | 'fanart' | 'thumb' = 'poster'): string {

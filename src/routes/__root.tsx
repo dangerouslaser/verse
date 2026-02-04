@@ -4,6 +4,7 @@ import { Outlet, createRootRoute } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { Toaster } from '@/components/ui/sonner';
 import { Navigation } from '@/components/layout/Navigation';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,15 +18,17 @@ const queryClient = new QueryClient({
 
 function RootComponent() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-background text-foreground">
-        <Navigation />
-        <Outlet />
-      </div>
-      <Toaster />
-      <ReactQueryDevtools initialIsOpen={false} />
-      <TanStackRouterDevtools position="bottom-right" />
-    </QueryClientProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <QueryClientProvider client={queryClient}>
+        <div className="min-h-screen bg-background text-foreground">
+          <Navigation />
+          <Outlet />
+        </div>
+        <Toaster />
+        <ReactQueryDevtools initialIsOpen={false} />
+        <TanStackRouterDevtools position="bottom-right" />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

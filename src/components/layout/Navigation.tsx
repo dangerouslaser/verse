@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { Film, Tv, Settings } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export function Navigation() {
   return (
@@ -15,7 +16,7 @@ export function Navigation() {
           </Link>
 
           {/* Navigation Links */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4">
             <Link
               to="/movies"
               className="flex items-center space-x-2 text-muted-foreground transition-colors hover:text-foreground [&.active]:text-foreground"
@@ -42,6 +43,10 @@ export function Navigation() {
               <Settings className="h-5 w-5" />
               <span>Settings</span>
             </Link>
+
+            <div className="ml-2 border-l pl-4">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </div>

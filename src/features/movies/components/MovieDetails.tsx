@@ -8,7 +8,7 @@ import { WatchedIndicator } from '@/components/video/WatchedIndicator';
 import { MovieActions } from './MovieActions';
 import { MovieMetadata } from './MovieMetadata';
 import { MovieCast } from './MovieCast';
-import { getFanartUrl, getPosterUrl } from '@/lib/image-utils';
+import { getFanartUrl, getClearLogoUrl } from '@/lib/image-utils';
 
 export function MovieDetails() {
   const { movieId } = useParams({ strict: false }) as { movieId: string };
@@ -53,7 +53,7 @@ export function MovieDetails() {
   }
 
   const fanartUrl = getFanartUrl(movie.art);
-  const posterUrl = getPosterUrl(movie.art);
+  const clearLogoUrl = getClearLogoUrl(movie.art);
 
   return (
     <div className="min-h-screen">
@@ -68,7 +68,18 @@ export function MovieDetails() {
             placeholderType="fanart"
             className="h-full w-full"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent transition-colors duration-300" />
+
+          {/* Clearlogo overlay */}
+          {clearLogoUrl && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <img
+                src={clearLogoUrl}
+                alt={movie.title}
+                className="max-h-[40%] max-w-[80%] object-contain drop-shadow-2xl"
+              />
+            </div>
+          )}
         </div>
       )}
 
@@ -81,53 +92,36 @@ export function MovieDetails() {
           </Button>
         </Link>
 
-        <div className="grid gap-8 lg:grid-cols-[300px_1fr]">
-          {/* Poster */}
-          <div className="mx-auto w-full max-w-[300px] lg:mx-0">
-            <div className="relative">
-              <MediaImage
-                src={posterUrl}
-                alt={movie.title}
-                aspectRatio="poster"
-                loading="eager"
-                placeholderType="poster"
-                className="w-full rounded-lg shadow-lg"
-              />
-              {movie.playcount !== undefined && movie.playcount > 0 && (
-                <div className="absolute right-3 top-3">
-                  <WatchedIndicator
-                    playcount={movie.playcount}
-                    resume={movie.resume}
-                    variant="icon"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Details */}
-          <div className="space-y-6">
-            {/* Title */}
+        <div className="space-y-6">
+          {/* Title and Watched Indicator */}
+          <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="mb-2 text-4xl font-bold">{movie.title}</h1>
               {movie.originaltitle && movie.originaltitle !== movie.title && (
                 <p className="text-lg text-muted-foreground">{movie.originaltitle}</p>
               )}
             </div>
-
-            {/* Actions */}
-            <MovieActions movie={movie} />
-
-            {/* Metadata */}
-            <MovieMetadata movie={movie} />
-
-            {/* Cast */}
-            {movie.cast && movie.cast.length > 0 && (
-              <div className="pt-6">
-                <MovieCast cast={movie.cast} />
-              </div>
+            {movie.playcount !== undefined && movie.playcount > 0 && (
+              <WatchedIndicator
+                playcount={movie.playcount}
+                resume={movie.resume}
+                variant="icon"
+              />
             )}
           </div>
+
+          {/* Actions */}
+          <MovieActions movie={movie} />
+
+          {/* Metadata */}
+          <MovieMetadata movie={movie} />
+
+          {/* Cast */}
+          {movie.cast && movie.cast.length > 0 && (
+            <div className="pt-6">
+              <MovieCast cast={movie.cast} />
+            </div>
+          )}
         </div>
       </div>
     </div>

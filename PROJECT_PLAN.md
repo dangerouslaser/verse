@@ -529,14 +529,16 @@ export class KodiWebSocket {
 - Movie browsing with infinite scroll (pagination of 100 items)
 - Search, genre filtering, and sorting (title, year, rating, date added)
 - Movie cards with posters, ratings, watched indicators
+- Movie detail pages with fanart header and clearlogo overlay
+- Edit Artwork button (UI placeholder for future TMDB/Fanart.TV integration)
 - Navigation system (Movies, TV Shows, Settings)
 - Proper Kodi image proxy configuration
 - shadcn/ui component integration
 
 **Next Steps**:
-- Implement movie detail pages
 - Add TV Shows browsing
 - Implement playback controls
+- Complete movie detail features
 
 **Deliverable**: Full video library browsing with basic playback
 
@@ -694,13 +696,20 @@ export class KodiWebSocket {
 1. File browser
 2. Thumbnail management
 3. Media editor (metadata editing)
-4. API browser ("The Lab" equivalent)
-5. Input sending to Kodi
-6. Cast/remote control features
-7. Batch operations
-8. Context menus
-9. Advanced keyboard shortcuts
-10. Gesture support (mobile)
+4. **Artwork editor with TMDB and Fanart.TV integration**
+   - Fetch artwork from TMDB (The Movie Database)
+   - Fetch artwork from Fanart.TV
+   - Browse and select posters, fanart, clearlogo, clearart
+   - Preview artwork before applying
+   - Set artwork for movies and TV shows
+   - Bulk artwork operations
+5. API browser ("The Lab" equivalent)
+6. Input sending to Kodi
+7. Cast/remote control features
+8. Batch operations
+9. Context menus
+10. Advanced keyboard shortcuts
+11. Gesture support (mobile)
 
 **Deliverable**: Feature parity with legacy system
 
