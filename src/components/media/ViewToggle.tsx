@@ -20,7 +20,7 @@ export function ViewToggle({ value, onChange, className }: ViewToggleProps) {
           onChange('grid');
         }}
         className={cn(
-          'h-8 gap-2 transition-all',
+          'h-10 gap-2 transition-all',
           value === 'grid'
             ? 'border-input bg-background text-foreground border shadow-sm'
             : 'text-muted-foreground hover:text-foreground border border-transparent'
@@ -38,7 +38,7 @@ export function ViewToggle({ value, onChange, className }: ViewToggleProps) {
           onChange('list');
         }}
         className={cn(
-          'h-8 gap-2 transition-all',
+          'h-10 gap-2 transition-all',
           value === 'list'
             ? 'border-input bg-background text-foreground border shadow-sm'
             : 'text-muted-foreground hover:text-foreground border border-transparent'
