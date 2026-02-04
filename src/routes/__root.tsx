@@ -5,6 +5,7 @@ import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { Toaster } from '@/components/ui/sonner';
 import { Navigation } from '@/components/layout/Navigation';
 import { ThemeProvider } from '@/components/theme-provider';
+import { NowPlaying } from '@/components/player/NowPlaying';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,9 +21,10 @@ function RootComponent() {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryClientProvider client={queryClient}>
-        <div className="min-h-screen bg-background text-foreground">
+        <div className="bg-background text-foreground min-h-screen">
           <Navigation />
           <Outlet />
+          <NowPlaying />
         </div>
         <Toaster />
         <ReactQueryDevtools initialIsOpen={false} />
