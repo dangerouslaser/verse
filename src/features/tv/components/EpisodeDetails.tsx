@@ -1,6 +1,7 @@
 import { useParams, Link } from '@tanstack/react-router';
 import { ArrowLeft, Play } from 'lucide-react';
 import { useEpisodeDetails } from '@/api/hooks/useEpisodes';
+import { usePlayEpisode } from '@/api/hooks/usePlayback';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
@@ -9,35 +10,13 @@ import { WatchedIndicator } from '@/components/video/WatchedIndicator';
 import { MovieCast } from '@/features/movies/components/MovieCast';
 import { getThumbnailUrl, getFanartUrl } from '@/lib/image-utils';
 import { formatRuntime } from '@/lib/format';
-import { useMutation } from '@tanstack/react-query';
-import { kodi } from '@/api/client';
-import { toast } from 'sonner';
 
 export function EpisodeDetails() {
   const { tvshowId, season, episodeId } = useParams({ strict: false });
   const episodeIdNum = parseInt(episodeId, 10);
 
   const { data: episode, isLoading, isError, error } = useEpisodeDetails(episodeIdNum);
-
-  const playMutation = useMutation({
-    mutationFn: async () => {
-      await kodi.call('Player.Open', {
-        item: { episodeid: episodeIdNum },
-      });
-    },
-    onSuccess: () => {
-      if (episode) {
-        toast.success('Playing', {
-          description: `Now playing: ${episode.title}`,
-        });
-      }
-    },
-    onError: (error) => {
-      toast.error('Playback Error', {
-        description: error instanceof Error ? error.message : 'Failed to start playback',
-      });
-    },
-  });
+  const playMutation = usePlayEpisode();
 
   if (isLoading) {
     return (
@@ -75,7 +54,6 @@ export function EpisodeDetails() {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const thumbnailUrl: string | undefined = getThumbnailUrl(episode.art);
 
   const fanartUrl: string | undefined = getFanartUrl(episode.art);
@@ -161,7 +139,12 @@ export function EpisodeDetails() {
                 size="lg"
                 className="gap-2"
                 onClick={() => {
-                  playMutation.mutate();
+                  playMutation.mutate({
+                    episodeid: episodeIdNum,
+                    title: episode.title,
+                    season: episode.season,
+                    episode: episode.episode,
+                  });
                 }}
                 disabled={playMutation.isPending}
               >

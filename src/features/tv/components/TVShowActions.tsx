@@ -3,13 +3,16 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import type { KodiTVShow, KodiEpisode } from '@/api/types/video';
 import { kodi } from '@/api/client';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { formatEpisodeNumber } from '@/lib/format';
 
 interface TVShowActionsProps {
   tvshow: KodiTVShow;
 }
 
 export function TVShowActions({ tvshow }: TVShowActionsProps) {
+  const queryClient = useQueryClient();
+
   const playNextMutation = useMutation({
     mutationFn: async () => {
       // Get all episodes for this TV show
@@ -34,8 +37,12 @@ export function TVShowActions({ tvshow }: TVShowActionsProps) {
       return nextEpisode;
     },
     onSuccess: (episode) => {
+      // Invalidate queries to refresh watched status
+      void queryClient.invalidateQueries({ queryKey: ['episodes'] });
+      void queryClient.invalidateQueries({ queryKey: ['episode', episode.episodeid] });
+
       toast.success('Playing', {
-        description: `Now playing: S${String(episode.season).padStart(2, '0')}E${String(episode.episode).padStart(2, '0')} - ${episode.title}`,
+        description: `Now playing: ${formatEpisodeNumber(episode.season, episode.episode)} - ${episode.title}`,
       });
     },
     onError: (error) => {

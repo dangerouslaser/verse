@@ -54,12 +54,7 @@ export function getPosterUrl(art?: KodiArt): string | undefined {
   }
 
   // Try different poster types in order of preference
-  return (
-    getImageUrl(art.poster) ||
-    getImageUrl(art.thumb) ||
-    getImageUrl(art.icon) ||
-    undefined
-  );
+  return getImageUrl(art.poster) || getImageUrl(art.thumb) || getImageUrl(art.icon) || undefined;
 }
 
 /**
@@ -71,10 +66,7 @@ export function getFanartUrl(art?: KodiArt): string | undefined {
   }
 
   return (
-    getImageUrl(art.fanart) ||
-    getImageUrl(art.landscape) ||
-    getImageUrl(art.banner) ||
-    undefined
+    getImageUrl(art.fanart) || getImageUrl(art.landscape) || getImageUrl(art.banner) || undefined
   );
 }
 
@@ -86,13 +78,13 @@ export function getThumbUrl(art?: KodiArt): string | undefined {
     return undefined;
   }
 
-  return (
-    getImageUrl(art.thumb) ||
-    getImageUrl(art.poster) ||
-    getImageUrl(art.icon) ||
-    undefined
-  );
+  return getImageUrl(art.thumb) || getImageUrl(art.poster) || getImageUrl(art.icon) || undefined;
 }
+
+/**
+ * Alias for getThumbUrl (for consistency with other naming)
+ */
+export { getThumbUrl as getThumbnailUrl };
 
 /**
  * Get the clearlogo image from art object
@@ -118,6 +110,6 @@ export function getPlaceholderUrl(type: 'poster' | 'fanart' | 'thumb' = 'poster'
 
   const color = colors[type];
   // Simple SVG placeholder
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600"><rect width="400" height="600" fill="${color}"/></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600"><rect width="400" height="600" fill="${String(color)}"/></svg>`;
   return `data:image/svg+xml;base64,${btoa(svg)}`;
 }

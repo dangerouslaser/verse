@@ -5,12 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MediaImage } from '@/components/media/MediaImage';
 import { WatchedIndicator } from '@/components/video/WatchedIndicator';
+import { usePlayEpisode } from '@/api/hooks/usePlayback';
 import type { KodiEpisode } from '@/api/types/video';
 import { getThumbnailUrl } from '@/lib/image-utils';
 import { formatRuntime } from '@/lib/format';
-import { useMutation } from '@tanstack/react-query';
-import { kodi } from '@/api/client';
-import { toast } from 'sonner';
 
 interface EpisodeListProps {
   episodes: KodiEpisode[];
@@ -19,35 +17,20 @@ interface EpisodeListProps {
 }
 
 export function EpisodeList({ episodes, tvshowId, season }: EpisodeListProps) {
-  const playMutation = useMutation({
-    mutationFn: async (episodeid: number) => {
-      await kodi.call('Player.Open', {
-        item: { episodeid },
-      });
-    },
-    onSuccess: (_, episodeid) => {
-      const episode = episodes.find((ep) => ep.episodeid === episodeid);
-      if (episode) {
-        toast.success('Playing', {
-          description: `Now playing: S${String(episode.season).padStart(2, '0')}E${String(episode.episode).padStart(2, '0')} - ${episode.title}`,
-        });
-      }
-    },
-    onError: (error) => {
-      toast.error('Playback Error', {
-        description: error instanceof Error ? error.message : 'Failed to start playback',
-      });
-    },
-  });
+  const playMutation = usePlayEpisode();
 
-  const handlePlay = (episodeid: number) => {
-    playMutation.mutate(episodeid);
+  const handlePlay = (episode: KodiEpisode) => {
+    playMutation.mutate({
+      episodeid: episode.episodeid,
+      title: episode.title,
+      season: episode.season,
+      episode: episode.episode,
+    });
   };
 
   return (
     <div className="space-y-3">
       {episodes.map((episode) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
         const thumbnailUrl: string | undefined = getThumbnailUrl(episode.art);
         const isWatched = episode.playcount !== undefined && episode.playcount > 0;
         const hasResume: boolean = Boolean(episode.resume?.position && episode.resume.position > 0);
@@ -141,7 +124,7 @@ export function EpisodeList({ episodes, tvshowId, season }: EpisodeListProps) {
                       variant="ghost"
                       className="gap-2"
                       onClick={() => {
-                        handlePlay(episode.episodeid);
+                        handlePlay(episode);
                       }}
                       disabled={playMutation.isPending}
                     >

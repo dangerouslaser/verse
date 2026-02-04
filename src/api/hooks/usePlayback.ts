@@ -1,4 +1,9 @@
-import { useMutation, useQuery, type UseMutationOptions } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type UseMutationOptions,
+} from '@tanstack/react-query';
 import { kodi } from '@/api/client';
 import type {
   PlayOptions,
@@ -6,6 +11,8 @@ import type {
   GetPlayerPropertiesResponse,
 } from '@/api/types/player';
 import { PLAYER_PROPERTIES } from '@/api/types/player';
+import { toast } from 'sonner';
+import { formatEpisodeNumber } from '@/lib/format';
 
 /**
  * Hook to play a movie or episode
@@ -49,13 +56,10 @@ export function usePlayerProperties(playerId: number | undefined) {
         throw new Error('Player ID is required');
       }
 
-      const response = await kodi.call<GetPlayerPropertiesResponse>(
-        'Player.GetProperties',
-        {
-          playerid: playerId,
-          properties: PLAYER_PROPERTIES,
-        }
-      );
+      const response = await kodi.call<GetPlayerPropertiesResponse>('Player.GetProperties', {
+        playerid: playerId,
+        properties: PLAYER_PROPERTIES,
+      });
       return response;
     },
     enabled: playerId !== undefined,
@@ -109,5 +113,50 @@ export function useSeek(
       return response;
     },
     ...options,
+  });
+}
+
+interface PlayEpisodeOptions {
+  episodeid: number;
+  title?: string;
+  season?: number;
+  episode?: number;
+}
+
+/**
+ * Hook for playing an episode with standardized error handling, notifications, and query invalidation
+ */
+export function usePlayEpisode() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (options: PlayEpisodeOptions) => {
+      await kodi.call('Player.Open', {
+        item: { episodeid: options.episodeid },
+      });
+      return options;
+    },
+    onSuccess: (options) => {
+      // Invalidate queries to refresh watched status
+      void queryClient.invalidateQueries({ queryKey: ['episodes'] });
+      void queryClient.invalidateQueries({ queryKey: ['episode', options.episodeid] });
+
+      // Show success toast
+      let description = 'Now playing';
+      if (options.title) {
+        if (options.season !== undefined && options.episode !== undefined) {
+          description = `Now playing: ${formatEpisodeNumber(options.season, options.episode)} - ${options.title}`;
+        } else {
+          description = `Now playing: ${options.title}`;
+        }
+      }
+
+      toast.success('Playing', { description });
+    },
+    onError: (error) => {
+      toast.error('Playback Error', {
+        description: error instanceof Error ? error.message : 'Failed to start playback',
+      });
+    },
   });
 }

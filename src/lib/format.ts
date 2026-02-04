@@ -16,14 +16,14 @@ export function formatRuntime(runtime?: number): string {
   const minutes = runtime % 60;
 
   if (hours === 0) {
-    return `${minutes}m`;
+    return `${String(minutes)}m`;
   }
 
   if (minutes === 0) {
-    return `${hours}h`;
+    return `${String(hours)}h`;
   }
 
-  return `${hours}h ${minutes}m`;
+  return `${String(hours)}h ${String(minutes)}m`;
 }
 
 /**
@@ -85,7 +85,7 @@ export function formatYear(dateString?: string | number): string {
  * @returns Formatted rating like "8.5"
  */
 export function formatRating(rating?: number, decimals: number = 1): string {
-  if (rating === undefined || rating === null) {
+  if (rating === undefined) {
     return '';
   }
 
@@ -98,11 +98,11 @@ export function formatRating(rating?: number, decimals: number = 1): string {
  * @returns Formatted percentage like "75%"
  */
 export function formatPercentage(value?: number): string {
-  if (value === undefined || value === null) {
+  if (value === undefined) {
     return '';
   }
 
-  return `${Math.round(value)}%`;
+  return `${String(Math.round(value))}%`;
 }
 
 /**
@@ -124,7 +124,7 @@ export function formatFileSize(bytes?: number): string {
     unitIndex++;
   }
 
-  return `${size.toFixed(1)} ${units[unitIndex]}`;
+  return `${size.toFixed(1)} ${String(units[unitIndex])}`;
 }
 
 /**
@@ -162,10 +162,10 @@ export function formatTime(seconds?: number): string {
   const pad = (num: number) => num.toString().padStart(2, '0');
 
   if (hours > 0) {
-    return `${hours}:${pad(minutes)}:${pad(secs)}`;
+    return `${String(hours)}:${pad(minutes)}:${pad(secs)}`;
   }
 
-  return `${minutes}:${pad(secs)}`;
+  return `${String(minutes)}:${pad(secs)}`;
 }
 
 /**
@@ -191,7 +191,7 @@ export function joinArray(items?: string[], separator: string = ', '): string {
  */
 export function pluralize(count: number, singular: string, plural?: string): string {
   const word = count === 1 ? singular : plural || `${singular}s`;
-  return `${count} ${word}`;
+  return `${String(count)} ${word}`;
 }
 
 /**
@@ -211,4 +211,14 @@ export function truncate(text?: string, maxLength: number = 100, ellipsis: strin
   }
 
   return text.slice(0, maxLength - ellipsis.length) + ellipsis;
+}
+
+/**
+ * Format episode number as S##E## format
+ * @param season Season number
+ * @param episode Episode number
+ * @returns Formatted string like "S01E05"
+ */
+export function formatEpisodeNumber(season: number, episode: number): string {
+  return `S${season.toString().padStart(2, '0')}E${episode.toString().padStart(2, '0')}`;
 }
