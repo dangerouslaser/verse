@@ -36,9 +36,30 @@ export class KodiError extends Error {
 export class KodiClient {
   private endpoint: string;
   private requestId: number = 0;
+  private username?: string;
+  private password?: string;
 
-  constructor(endpoint: string = '/jsonrpc') {
+  constructor(endpoint: string = '/jsonrpc', username?: string, password?: string) {
     this.endpoint = endpoint;
+    this.username = username;
+    this.password = password;
+  }
+
+  /**
+   * Get authentication headers if credentials are provided
+   */
+  private getHeaders(): HeadersInit {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    // Add basic auth if credentials are provided
+    if (this.username && this.password) {
+      const auth = btoa(`${this.username}:${this.password}`);
+      headers['Authorization'] = `Basic ${auth}`;
+    }
+
+    return headers;
   }
 
   /**
@@ -55,9 +76,7 @@ export class KodiClient {
     try {
       const response = await fetch(this.endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: this.getHeaders(),
         body: JSON.stringify(request),
       });
 
@@ -111,5 +130,9 @@ export class KodiClient {
   }
 }
 
-// Export a singleton instance
-export const kodi = new KodiClient();
+// Export a singleton instance with credentials from environment variables
+export const kodi = new KodiClient(
+  import.meta.env.VITE_KODI_JSONRPC_PATH || '/jsonrpc',
+  import.meta.env.VITE_KODI_USERNAME,
+  import.meta.env.VITE_KODI_PASSWORD
+);
