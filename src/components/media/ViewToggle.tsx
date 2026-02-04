@@ -22,8 +22,8 @@ export function ViewToggle({ value, onChange, className }: ViewToggleProps) {
         className={cn(
           'h-8 gap-2 transition-all',
           value === 'grid'
-            ? 'bg-background text-foreground shadow-sm'
-            : 'text-muted-foreground hover:text-foreground'
+            ? 'bg-background border-primary text-foreground border-2'
+            : 'text-muted-foreground hover:text-foreground border-2 border-transparent'
         )}
         aria-label="Grid view"
         aria-pressed={value === 'grid'}
@@ -40,8 +40,8 @@ export function ViewToggle({ value, onChange, className }: ViewToggleProps) {
         className={cn(
           'h-8 gap-2 transition-all',
           value === 'list'
-            ? 'bg-background text-foreground shadow-sm'
-            : 'text-muted-foreground hover:text-foreground'
+            ? 'bg-background border-primary text-foreground border-2'
+            : 'text-muted-foreground hover:text-foreground border-2 border-transparent'
         )}
         aria-label="List view"
         aria-pressed={value === 'list'}
