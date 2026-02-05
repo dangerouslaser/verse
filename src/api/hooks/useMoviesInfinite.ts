@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { kodi } from '@/api/client';
-import type { GetMoviesResponse, KodiMovie } from '@/api/types/video';
+import type { GetMoviesResponse } from '@/api/types/video';
 import { MOVIE_PROPERTIES } from '@/api/types/video';
 import type { KodiSort, KodiFilter } from '@/api/types/common';
 
@@ -18,7 +18,7 @@ export function useMoviesInfinite(options: UseMoviesInfiniteOptions = {}) {
 
   return useInfiniteQuery({
     queryKey: ['movies-infinite', options.sort, options.filter],
-    queryFn: async ({ pageParam = 0, signal }) => {
+    queryFn: async ({ pageParam, signal }) => {
       const response = await kodi.call<GetMoviesResponse>(
         'VideoLibrary.GetMovies',
         {
@@ -30,7 +30,7 @@ export function useMoviesInfinite(options: UseMoviesInfiniteOptions = {}) {
         signal
       );
       return {
-        movies: response.movies || [],
+        movies: response.movies,
         nextCursor: response.limits.total > pageParam + pageSize ? pageParam + pageSize : undefined,
         total: response.limits.total,
       };

@@ -1,7 +1,7 @@
 import { Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { formatTime, timeToSeconds } from '@/lib/format';
+import { formatTime } from '@/lib/format';
 import type { KodiResume } from '@/api/types/common';
 
 interface ResumeButtonProps {
@@ -23,7 +23,6 @@ export function ResumeButton({
 }: ResumeButtonProps) {
   // Convert resume position to time object format for formatting
   const position = resume.position;
-  const percentage = resume.total > 0 ? (position / resume.total) * 100 : 0;
 
   return (
     <Button

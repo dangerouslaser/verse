@@ -32,6 +32,8 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    // Use relative paths for production builds (required for Kodi web interface)
+    base: mode === 'production' ? './' : '/',
     plugins: [
       // eslint-disable-next-line @typescript-eslint/no-deprecated
       TanStackRouterVite(),
@@ -56,7 +58,7 @@ export default defineConfig(({ mode }) => {
           proxyTimeout: 60000,
           headers,
           configure: (proxy, _options) => {
-            proxy.on('error', (err, req, res) => {
+            proxy.on('error', (err, req, _res) => {
               console.error('Proxy error:', err);
               console.error('Request:', req.method, req.url);
             });

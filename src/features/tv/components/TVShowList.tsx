@@ -60,7 +60,8 @@ export function TVShowList() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        const entry = entries[0];
+        if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
           void fetchNextPage();
         }
       },

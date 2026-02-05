@@ -152,25 +152,29 @@ describe('getPlaceholderUrl', () => {
     const result = getPlaceholderUrl('poster');
     expect(result).toMatch(/^data:image\/svg\+xml;base64,/);
     // Decode and check the SVG contains the right color
-    const decoded = atob(result.split(',')[1]);
+    const base64Part = result.split(',')[1] ?? '';
+    const decoded = atob(base64Part);
     expect(decoded).toContain('rgb(30,30,40)');
   });
 
   it('returns data URI for fanart type', () => {
     const result = getPlaceholderUrl('fanart');
-    const decoded = atob(result.split(',')[1]);
+    const base64Part = result.split(',')[1] ?? '';
+    const decoded = atob(base64Part);
     expect(decoded).toContain('rgb(20,20,30)');
   });
 
   it('returns data URI for thumb type', () => {
     const result = getPlaceholderUrl('thumb');
-    const decoded = atob(result.split(',')[1]);
+    const base64Part = result.split(',')[1] ?? '';
+    const decoded = atob(base64Part);
     expect(decoded).toContain('rgb(25,25,35)');
   });
 
   it('defaults to poster type', () => {
     const result = getPlaceholderUrl();
-    const decoded = atob(result.split(',')[1]);
+    const base64Part = result.split(',')[1] ?? '';
+    const decoded = atob(base64Part);
     expect(decoded).toContain('rgb(30,30,40)');
   });
 });

@@ -44,7 +44,8 @@ export function MovieList() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        const entry = entries[0];
+        if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
           void fetchNextPage();
         }
       },
@@ -147,7 +148,7 @@ export function MovieList() {
           {/* Sort by */}
           <Select
             value={filters.sortBy}
-            onValueChange={(value) => {
+            onValueChange={(value: 'title' | 'year' | 'rating' | 'dateadded') => {
               setFilters({ ...filters, sortBy: value });
             }}
           >
@@ -165,7 +166,7 @@ export function MovieList() {
           {/* Sort order */}
           <Select
             value={filters.sortOrder}
-            onValueChange={(value) => {
+            onValueChange={(value: 'asc' | 'desc') => {
               setFilters({ ...filters, sortOrder: value });
             }}
           >

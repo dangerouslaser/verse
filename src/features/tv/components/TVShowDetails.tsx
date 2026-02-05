@@ -13,7 +13,7 @@ import { getFanartUrl, getClearLogoUrl } from '@/lib/image-utils';
 
 export function TVShowDetails() {
   const { tvshowId } = useParams({ strict: false });
-  const tvshowIdNum = parseInt(tvshowId, 10);
+  const tvshowIdNum = parseInt(tvshowId ?? '0', 10);
   const matches = useMatches();
 
   // Check if we're on a child route (season or episode)

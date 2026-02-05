@@ -53,10 +53,10 @@ export function EpisodeList({ episodes, tvshowId, season }: EpisodeListProps) {
                     src={thumbnailUrl}
                     alt={episode.title}
                     aspectRatio="video"
-                    placeholderType="video"
+                    placeholderType="fanart"
                     className="rounded"
                   />
-                  {hasResume && (
+                  {hasResume && episode.resume && (
                     <div className="absolute right-0 bottom-0 left-0 h-1 bg-black/60">
                       <div
                         className="bg-primary h-full"

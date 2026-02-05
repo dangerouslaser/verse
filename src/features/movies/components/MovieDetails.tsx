@@ -12,7 +12,7 @@ import { getFanartUrl, getClearLogoUrl } from '@/lib/image-utils';
 
 export function MovieDetails() {
   const { movieId } = useParams({ strict: false });
-  const movieIdNum = parseInt(movieId, 10);
+  const movieIdNum = parseInt(movieId ?? '0', 10);
 
   const { data: movie, isLoading, isError, error } = useMovieDetails(movieIdNum);
   const { setItems } = useBreadcrumbs();

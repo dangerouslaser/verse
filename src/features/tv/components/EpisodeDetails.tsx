@@ -15,7 +15,7 @@ import { formatRuntime } from '@/lib/format';
 
 export function EpisodeDetails() {
   const { tvshowId, season, episodeId } = useParams({ strict: false });
-  const episodeIdNum = parseInt(episodeId, 10);
+  const episodeIdNum = parseInt(episodeId ?? '0', 10);
 
   const { data: episode, isLoading, isError, error } = useEpisodeDetails(episodeIdNum);
   const playMutation = usePlayEpisode();
@@ -105,10 +105,10 @@ export function EpisodeDetails() {
               src={thumbnailUrl}
               alt={episode.title}
               aspectRatio="video"
-              placeholderType="video"
+              placeholderType="fanart"
               className="w-full rounded-lg"
             />
-            {hasResume && (
+            {hasResume && episode.resume && (
               <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-black/60">
                 <div
                   className="bg-primary h-full"
@@ -135,7 +135,7 @@ export function EpisodeDetails() {
                 {episode.showtitle && (
                   <Link
                     to="/tv/$tvshowId"
-                    params={{ tvshowId }}
+                    params={{ tvshowId: tvshowId ?? '' }}
                     className="text-muted-foreground hover:text-primary text-lg transition-colors"
                   >
                     {episode.showtitle}
