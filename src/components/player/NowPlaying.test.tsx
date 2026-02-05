@@ -65,6 +65,8 @@ vi.mock('./VolumeControl', () => ({
 // Mock image utils
 vi.mock('@/lib/image-utils', () => ({
   getImageUrl: (url: string) => url,
+  getPosterUrl: (art: { poster?: string } | undefined) => art?.poster,
+  getThumbUrl: (art: { thumb?: string } | undefined) => art?.thumb,
 }));
 
 const defaultMutationReturn = {

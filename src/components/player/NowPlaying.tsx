@@ -18,7 +18,7 @@ import { usePlayerStore } from '@/stores/player';
 import { Button } from '@/components/ui/button';
 import { SeekBar } from './SeekBar';
 import { VolumeControl } from './VolumeControl';
-import { getImageUrl } from '@/lib/image-utils';
+import { getPosterUrl, getThumbUrl } from '@/lib/image-utils';
 import { getItemTitle } from '@/lib/player-utils';
 import { timeToSeconds, formatTime } from '@/lib/format';
 import { toast } from 'sonner';
@@ -61,11 +61,9 @@ export function NowPlaying() {
   const totalTime = timeToSeconds(playerProps.totaltime);
 
   const item = playerItemData?.item;
-  const thumbnailUrl = item?.art?.thumb
-    ? getImageUrl(item.art.thumb)
-    : item?.thumbnail
-      ? getImageUrl(item.thumbnail)
-      : undefined;
+  // Use poster for video content (movies/TV), thumb for audio
+  const isVideo = activePlayer.type === 'video';
+  const thumbnailUrl = isVideo ? getPosterUrl(item?.art) : getThumbUrl(item?.art);
 
   const { title, subtitle } = item
     ? getItemTitle(item)
@@ -109,7 +107,7 @@ export function NowPlaying() {
   };
 
   return (
-    <div className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/60 fixed right-0 bottom-0 left-0 z-50 border-t backdrop-blur">
+    <div className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky bottom-0 z-50 border-t backdrop-blur">
       {/* Thin seek bar on top of the footer */}
       <div className="px-0">
         <SeekBar
@@ -130,7 +128,7 @@ export function NowPlaying() {
               <img
                 src={thumbnailUrl}
                 alt={title}
-                className="h-10 w-10 flex-shrink-0 rounded object-cover"
+                className={`h-10 flex-shrink-0 rounded object-cover ${isVideo ? 'w-7' : 'w-10'}`}
               />
             )}
             <div className="min-w-0 flex-1">
