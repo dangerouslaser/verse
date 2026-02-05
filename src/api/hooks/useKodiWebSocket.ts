@@ -36,6 +36,9 @@ export function useKodiWebSocket() {
           void queryClient.invalidateQueries({ queryKey: ['movies'] });
           void queryClient.invalidateQueries({ queryKey: ['episodes'] });
           void queryClient.invalidateQueries({ queryKey: ['tvshows'] });
+          void queryClient.invalidateQueries({ queryKey: ['artists'] });
+          void queryClient.invalidateQueries({ queryKey: ['albums'] });
+          void queryClient.invalidateQueries({ queryKey: ['songs'] });
           break;
 
         case 'Player.OnPropertyChanged':
@@ -70,6 +73,28 @@ export function useKodiWebSocket() {
         case 'VideoLibrary.OnRemove':
           void queryClient.invalidateQueries({ queryKey: ['movies'] });
           void queryClient.invalidateQueries({ queryKey: ['tvshows'] });
+          break;
+
+        // Audio library notifications
+        case 'AudioLibrary.OnUpdate':
+          void queryClient.invalidateQueries({ queryKey: ['artists'] });
+          void queryClient.invalidateQueries({ queryKey: ['albums'] });
+          void queryClient.invalidateQueries({ queryKey: ['songs'] });
+          void queryClient.invalidateQueries({ queryKey: ['music-genres'] });
+          break;
+
+        case 'AudioLibrary.OnRemove':
+          void queryClient.invalidateQueries({ queryKey: ['artists'] });
+          void queryClient.invalidateQueries({ queryKey: ['albums'] });
+          void queryClient.invalidateQueries({ queryKey: ['songs'] });
+          break;
+
+        case 'AudioLibrary.OnScanFinished':
+        case 'AudioLibrary.OnCleanFinished':
+          void queryClient.invalidateQueries({ queryKey: ['artists'] });
+          void queryClient.invalidateQueries({ queryKey: ['albums'] });
+          void queryClient.invalidateQueries({ queryKey: ['songs'] });
+          void queryClient.invalidateQueries({ queryKey: ['music-genres'] });
           break;
       }
     });

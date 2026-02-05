@@ -2,7 +2,18 @@
 
 import * as React from 'react';
 import { Link } from '@tanstack/react-router';
-import { Film, Tv, Settings, Sun, Moon, Wifi, WifiOff } from 'lucide-react';
+import {
+  Film,
+  Tv,
+  Settings,
+  Sun,
+  Moon,
+  Wifi,
+  WifiOff,
+  Music,
+  Disc3,
+  ListMusic,
+} from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { KodiLogo } from '@/components/icons/KodiLogo';
 import { useKodiConnectionStatus } from '@/api/hooks/useKodiWebSocket';
@@ -73,6 +84,55 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   >
                     <Tv />
                     <span>TV Shows</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Music</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Artists">
+                  <Link
+                    to="/music"
+                    activeProps={{
+                      className: 'bg-sidebar-accent text-sidebar-accent-foreground font-medium',
+                    }}
+                  >
+                    <Music />
+                    <span>Artists</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Albums">
+                  <Link
+                    to="/music/albums"
+                    activeProps={{
+                      className: 'bg-sidebar-accent text-sidebar-accent-foreground font-medium',
+                    }}
+                  >
+                    <Disc3 />
+                    <span>Albums</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Songs">
+                  <Link
+                    to="/music/songs"
+                    activeProps={{
+                      className: 'bg-sidebar-accent text-sidebar-accent-foreground font-medium',
+                    }}
+                  >
+                    <ListMusic />
+                    <span>Songs</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

@@ -32,3 +32,5 @@ export {
 } from './usePlaylist';
 
 export { useSetMovieWatched, useSetEpisodeWatched } from './useWatched';
+
+export { usePlaySong, usePlayAlbum, usePlayArtist, useAddToPlaylist } from './useMusicPlayback';

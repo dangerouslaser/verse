@@ -43,6 +43,9 @@ export interface PlayableItem {
   episodeid?: number;
   tvshowid?: number;
   seasonid?: number;
+  songid?: number;
+  albumid?: number;
+  artistid?: number;
   file?: string;
 }
 

@@ -588,25 +588,40 @@ export class KodiWebSocket {
 
 ---
 
-### Phase 3: Music Library — UP NEXT
+### Phase 3: Music Library — ✅ COMPLETE
 
 **Goal**: Implement complete music browsing experience
 
 **Tasks**:
 
-1. Artists list with virtual scrolling
-2. Artist detail page with albums
-3. Album detail page with tracks
-4. Song list views
-5. Music filtering (genre, year, etc.)
-6. Sorting options
-7. Search functionality for music
-8. Album artwork display with fallbacks
-9. Play/queue controls (Kodi mode)
-10. Metadata display (ratings, play count)
-11. Local audio streaming support
+1. ✅ Artists list with infinite scrolling and filtering
+2. ✅ Artist detail page with albums and metadata
+3. ✅ Album detail page with tracks
+4. ✅ Song list views with filtering and sorting
+5. ✅ Music filtering (genre, year, search)
+6. ✅ Sorting options (title, year, rating, date added, artist)
+7. ✅ Search functionality for music
+8. ✅ Album artwork display with square aspect ratio and fallbacks
+9. ✅ Play/queue controls (Kodi mode) for songs, albums, and artists
+10. ✅ Metadata display (bio, years active, genres, styles, moods, instruments)
+11. ⏳ Local audio streaming support — deferred to future phase
 
-**Deliverable**: Fully functional music library browsing
+**Completed Features**:
+
+- Artist browsing with infinite scroll, search, genre filtering, sorting
+- Artist detail pages with fanart header, clearlogo overlay, bio, metadata, album grid
+- Album browsing (all albums) with infinite scroll, search, genre/year filtering, sorting
+- Album detail pages with large artwork, tracklist (multi-disc support), metadata
+- Song browsing with infinite scroll, search, genre filtering, sorting
+- Three sidebar entries under "Music" group: Artists, Albums, Songs
+- Drill-down routes: /music → /music/$artistId → /music/$artistId/$albumId
+- Play/queue mutations for songs, albums, and artists (audio playlist)
+- MSW mock handlers for testing without a music library
+- WebSocket handlers for AudioLibrary notifications (OnUpdate, OnRemove, OnScanFinished, OnCleanFinished)
+- Breadcrumb navigation for all music pages
+- Grid and list view modes for artists and albums
+
+**Deliverable**: Full music library browsing with playback controls — ✅
 
 ---
 
@@ -1078,23 +1093,24 @@ export class KodiWebSocket {
 
 ## Current Status
 
-Phases 0-2 are complete. The application has a working video library (movies and TV shows) with full player controls, real-time WebSocket updates, and keyboard shortcuts. It builds as a Kodi addon and runs as a standalone web app during development.
+Phases 0-3 are complete. The application has working video and music libraries with full player controls, real-time WebSocket updates, and keyboard shortcuts. It builds as a Kodi addon and runs as a standalone web app during development.
 
 ### What's Done
 
 - Foundation: React 19 + TypeScript + Vite 7 + TanStack Router/Query + shadcn/ui
 - Movies: browse, search, filter, sort, detail pages, watched toggle, play/resume
 - TV Shows: browse with seasons and episodes, detail pages, watched toggle
+- Music: artists, albums, songs with browse/search/filter/sort, detail pages, play/queue
 - Player: footer bar, full player page, seek, volume, queue, keyboard shortcuts
-- WebSocket: real-time sync with Kodi notifications
+- WebSocket: real-time sync with Kodi notifications (video + audio libraries)
 - Testing: 127 tests across 9 test files, all passing
-- Build: TypeScript strict mode, ESLint strict type-checked, production build ~493KB JS + 62KB CSS
+- Build: TypeScript strict mode, ESLint strict type-checked, production build ~533KB JS + 63KB CSS
 
 ### Next Steps
 
-1. **Phase 3: Music Library** — Artists, albums, songs, virtual scrolling
-2. **Phase 4: Playlists** — Advanced queue management, drag-to-reorder
-3. **Phase 5: Search** — Global search across all media types
+1. **Phase 4: Playlists** — Advanced queue management, drag-to-reorder
+2. **Phase 5: Search** — Global search across all media types
+3. **Phase 6: Settings** — Connection settings, UI preferences
 4. Local browser streaming (dual player mode) — stretch goal
 
 ---

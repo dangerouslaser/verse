@@ -95,7 +95,7 @@ export interface KodiListResponse<T> {
     end: number;
     total: number;
   };
-  [key: string]: T[] | unknown;
+  [key: string]: T[] | { start: number; end: number; total: number } | undefined;
 }
 
 /**
@@ -112,7 +112,10 @@ export interface KodiSort {
     | 'playcount'
     | 'lastplayed'
     | 'dateadded'
-    | 'random';
+    | 'random'
+    | 'artist'
+    | 'album'
+    | 'track';
   order?: 'ascending' | 'descending';
   ignorearticle?: boolean;
 }

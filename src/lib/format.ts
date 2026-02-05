@@ -224,3 +224,36 @@ export function truncate(text?: string, maxLength: number = 100, ellipsis: strin
 export function formatEpisodeNumber(season: number, episode: number): string {
   return `S${season.toString().padStart(2, '0')}E${episode.toString().padStart(2, '0')}`;
 }
+
+/**
+ * Format track number with zero-padding
+ * @param track Track number
+ * @returns Formatted string like "01"
+ */
+export function formatTrackNumber(track?: number): string {
+  if (!track) return '';
+  return track.toString().padStart(2, '0');
+}
+
+/**
+ * Format disc and track for multi-disc albums
+ * @param disc Disc number
+ * @param track Track number
+ * @returns Formatted string like "1-01" or "01"
+ */
+export function formatDiscTrack(disc?: number, track?: number): string {
+  if (!track) return '';
+  if (disc && disc > 1) {
+    return `${String(disc)}-${track.toString().padStart(2, '0')}`;
+  }
+  return track.toString().padStart(2, '0');
+}
+
+/**
+ * Format duration in seconds for songs (alias of formatTime)
+ * @param seconds Duration in seconds
+ * @returns Formatted string like "3:45" or "1:23:45"
+ */
+export function formatDuration(seconds?: number): string {
+  return formatTime(seconds);
+}

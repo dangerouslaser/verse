@@ -13,10 +13,15 @@ import { Route as IndexRouteImport } from './routes/index';
 import { Route as TvIndexRouteImport } from './routes/tv/index';
 import { Route as SettingsIndexRouteImport } from './routes/settings/index';
 import { Route as PlayerIndexRouteImport } from './routes/player/index';
+import { Route as MusicIndexRouteImport } from './routes/music/index';
 import { Route as MoviesIndexRouteImport } from './routes/movies/index';
 import { Route as TvTvshowIdRouteImport } from './routes/tv/$tvshowId';
+import { Route as MusicSongsRouteImport } from './routes/music/songs';
+import { Route as MusicAlbumsRouteImport } from './routes/music/albums';
+import { Route as MusicArtistIdRouteImport } from './routes/music/$artistId';
 import { Route as MoviesMovieIdRouteImport } from './routes/movies/$movieId';
 import { Route as TvTvshowIdSeasonRouteImport } from './routes/tv/$tvshowId/$season';
+import { Route as MusicArtistIdAlbumIdRouteImport } from './routes/music/$artistId/$albumId';
 import { Route as TvTvshowIdSeasonEpisodeIdRouteImport } from './routes/tv/$tvshowId/$season/$episodeId';
 
 const IndexRoute = IndexRouteImport.update({
@@ -39,6 +44,11 @@ const PlayerIndexRoute = PlayerIndexRouteImport.update({
   path: '/player/',
   getParentRoute: () => rootRouteImport,
 } as any);
+const MusicIndexRoute = MusicIndexRouteImport.update({
+  id: '/music/',
+  path: '/music/',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const MoviesIndexRoute = MoviesIndexRouteImport.update({
   id: '/movies/',
   path: '/movies/',
@@ -47,6 +57,21 @@ const MoviesIndexRoute = MoviesIndexRouteImport.update({
 const TvTvshowIdRoute = TvTvshowIdRouteImport.update({
   id: '/tv/$tvshowId',
   path: '/tv/$tvshowId',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const MusicSongsRoute = MusicSongsRouteImport.update({
+  id: '/music/songs',
+  path: '/music/songs',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const MusicAlbumsRoute = MusicAlbumsRouteImport.update({
+  id: '/music/albums',
+  path: '/music/albums',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const MusicArtistIdRoute = MusicArtistIdRouteImport.update({
+  id: '/music/$artistId',
+  path: '/music/$artistId',
   getParentRoute: () => rootRouteImport,
 } as any);
 const MoviesMovieIdRoute = MoviesMovieIdRouteImport.update({
@@ -59,6 +84,11 @@ const TvTvshowIdSeasonRoute = TvTvshowIdSeasonRouteImport.update({
   path: '/$season',
   getParentRoute: () => TvTvshowIdRoute,
 } as any);
+const MusicArtistIdAlbumIdRoute = MusicArtistIdAlbumIdRouteImport.update({
+  id: '/$albumId',
+  path: '/$albumId',
+  getParentRoute: () => MusicArtistIdRoute,
+} as any);
 const TvTvshowIdSeasonEpisodeIdRoute = TvTvshowIdSeasonEpisodeIdRouteImport.update({
   id: '/$episodeId',
   path: '/$episodeId',
@@ -68,22 +98,32 @@ const TvTvshowIdSeasonEpisodeIdRoute = TvTvshowIdSeasonEpisodeIdRouteImport.upda
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
   '/movies/$movieId': typeof MoviesMovieIdRoute;
+  '/music/$artistId': typeof MusicArtistIdRouteWithChildren;
+  '/music/albums': typeof MusicAlbumsRoute;
+  '/music/songs': typeof MusicSongsRoute;
   '/tv/$tvshowId': typeof TvTvshowIdRouteWithChildren;
   '/movies/': typeof MoviesIndexRoute;
+  '/music/': typeof MusicIndexRoute;
   '/player/': typeof PlayerIndexRoute;
   '/settings/': typeof SettingsIndexRoute;
   '/tv/': typeof TvIndexRoute;
+  '/music/$artistId/$albumId': typeof MusicArtistIdAlbumIdRoute;
   '/tv/$tvshowId/$season': typeof TvTvshowIdSeasonRouteWithChildren;
   '/tv/$tvshowId/$season/$episodeId': typeof TvTvshowIdSeasonEpisodeIdRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
   '/movies/$movieId': typeof MoviesMovieIdRoute;
+  '/music/$artistId': typeof MusicArtistIdRouteWithChildren;
+  '/music/albums': typeof MusicAlbumsRoute;
+  '/music/songs': typeof MusicSongsRoute;
   '/tv/$tvshowId': typeof TvTvshowIdRouteWithChildren;
   '/movies': typeof MoviesIndexRoute;
+  '/music': typeof MusicIndexRoute;
   '/player': typeof PlayerIndexRoute;
   '/settings': typeof SettingsIndexRoute;
   '/tv': typeof TvIndexRoute;
+  '/music/$artistId/$albumId': typeof MusicArtistIdAlbumIdRoute;
   '/tv/$tvshowId/$season': typeof TvTvshowIdSeasonRouteWithChildren;
   '/tv/$tvshowId/$season/$episodeId': typeof TvTvshowIdSeasonEpisodeIdRoute;
 }
@@ -91,11 +131,16 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   '/': typeof IndexRoute;
   '/movies/$movieId': typeof MoviesMovieIdRoute;
+  '/music/$artistId': typeof MusicArtistIdRouteWithChildren;
+  '/music/albums': typeof MusicAlbumsRoute;
+  '/music/songs': typeof MusicSongsRoute;
   '/tv/$tvshowId': typeof TvTvshowIdRouteWithChildren;
   '/movies/': typeof MoviesIndexRoute;
+  '/music/': typeof MusicIndexRoute;
   '/player/': typeof PlayerIndexRoute;
   '/settings/': typeof SettingsIndexRoute;
   '/tv/': typeof TvIndexRoute;
+  '/music/$artistId/$albumId': typeof MusicArtistIdAlbumIdRoute;
   '/tv/$tvshowId/$season': typeof TvTvshowIdSeasonRouteWithChildren;
   '/tv/$tvshowId/$season/$episodeId': typeof TvTvshowIdSeasonEpisodeIdRoute;
 }
@@ -104,33 +149,48 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/movies/$movieId'
+    | '/music/$artistId'
+    | '/music/albums'
+    | '/music/songs'
     | '/tv/$tvshowId'
     | '/movies/'
+    | '/music/'
     | '/player/'
     | '/settings/'
     | '/tv/'
+    | '/music/$artistId/$albumId'
     | '/tv/$tvshowId/$season'
     | '/tv/$tvshowId/$season/$episodeId';
   fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
     | '/movies/$movieId'
+    | '/music/$artistId'
+    | '/music/albums'
+    | '/music/songs'
     | '/tv/$tvshowId'
     | '/movies'
+    | '/music'
     | '/player'
     | '/settings'
     | '/tv'
+    | '/music/$artistId/$albumId'
     | '/tv/$tvshowId/$season'
     | '/tv/$tvshowId/$season/$episodeId';
   id:
     | '__root__'
     | '/'
     | '/movies/$movieId'
+    | '/music/$artistId'
+    | '/music/albums'
+    | '/music/songs'
     | '/tv/$tvshowId'
     | '/movies/'
+    | '/music/'
     | '/player/'
     | '/settings/'
     | '/tv/'
+    | '/music/$artistId/$albumId'
     | '/tv/$tvshowId/$season'
     | '/tv/$tvshowId/$season/$episodeId';
   fileRoutesById: FileRoutesById;
@@ -138,8 +198,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   MoviesMovieIdRoute: typeof MoviesMovieIdRoute;
+  MusicArtistIdRoute: typeof MusicArtistIdRouteWithChildren;
+  MusicAlbumsRoute: typeof MusicAlbumsRoute;
+  MusicSongsRoute: typeof MusicSongsRoute;
   TvTvshowIdRoute: typeof TvTvshowIdRouteWithChildren;
   MoviesIndexRoute: typeof MoviesIndexRoute;
+  MusicIndexRoute: typeof MusicIndexRoute;
   PlayerIndexRoute: typeof PlayerIndexRoute;
   SettingsIndexRoute: typeof SettingsIndexRoute;
   TvIndexRoute: typeof TvIndexRoute;
@@ -175,6 +239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlayerIndexRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/music/': {
+      id: '/music/';
+      path: '/music';
+      fullPath: '/music/';
+      preLoaderRoute: typeof MusicIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/movies/': {
       id: '/movies/';
       path: '/movies';
@@ -187,6 +258,27 @@ declare module '@tanstack/react-router' {
       path: '/tv/$tvshowId';
       fullPath: '/tv/$tvshowId';
       preLoaderRoute: typeof TvTvshowIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/music/songs': {
+      id: '/music/songs';
+      path: '/music/songs';
+      fullPath: '/music/songs';
+      preLoaderRoute: typeof MusicSongsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/music/albums': {
+      id: '/music/albums';
+      path: '/music/albums';
+      fullPath: '/music/albums';
+      preLoaderRoute: typeof MusicAlbumsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/music/$artistId': {
+      id: '/music/$artistId';
+      path: '/music/$artistId';
+      fullPath: '/music/$artistId';
+      preLoaderRoute: typeof MusicArtistIdRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/movies/$movieId': {
@@ -203,6 +295,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TvTvshowIdSeasonRouteImport;
       parentRoute: typeof TvTvshowIdRoute;
     };
+    '/music/$artistId/$albumId': {
+      id: '/music/$artistId/$albumId';
+      path: '/$albumId';
+      fullPath: '/music/$artistId/$albumId';
+      preLoaderRoute: typeof MusicArtistIdAlbumIdRouteImport;
+      parentRoute: typeof MusicArtistIdRoute;
+    };
     '/tv/$tvshowId/$season/$episodeId': {
       id: '/tv/$tvshowId/$season/$episodeId';
       path: '/$episodeId';
@@ -212,6 +311,18 @@ declare module '@tanstack/react-router' {
     };
   }
 }
+
+interface MusicArtistIdRouteChildren {
+  MusicArtistIdAlbumIdRoute: typeof MusicArtistIdAlbumIdRoute;
+}
+
+const MusicArtistIdRouteChildren: MusicArtistIdRouteChildren = {
+  MusicArtistIdAlbumIdRoute: MusicArtistIdAlbumIdRoute,
+};
+
+const MusicArtistIdRouteWithChildren = MusicArtistIdRoute._addFileChildren(
+  MusicArtistIdRouteChildren
+);
 
 interface TvTvshowIdSeasonRouteChildren {
   TvTvshowIdSeasonEpisodeIdRoute: typeof TvTvshowIdSeasonEpisodeIdRoute;
@@ -238,8 +349,12 @@ const TvTvshowIdRouteWithChildren = TvTvshowIdRoute._addFileChildren(TvTvshowIdR
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MoviesMovieIdRoute: MoviesMovieIdRoute,
+  MusicArtistIdRoute: MusicArtistIdRouteWithChildren,
+  MusicAlbumsRoute: MusicAlbumsRoute,
+  MusicSongsRoute: MusicSongsRoute,
   TvTvshowIdRoute: TvTvshowIdRouteWithChildren,
   MoviesIndexRoute: MoviesIndexRoute,
+  MusicIndexRoute: MusicIndexRoute,
   PlayerIndexRoute: PlayerIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   TvIndexRoute: TvIndexRoute,
