@@ -23,29 +23,35 @@ const queryClient = new QueryClient({
   },
 });
 
-function RootComponent() {
+function AppShell() {
   useKeyboardShortcuts();
   useKodiWebSocket();
 
   return (
+    <BreadcrumbProvider>
+      <SidebarProvider defaultOpen={true}>
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <AppBreadcrumbs />
+          </header>
+          <main className="flex flex-1 flex-col">
+            <Outlet />
+          </main>
+          <NowPlaying />
+        </SidebarInset>
+      </SidebarProvider>
+    </BreadcrumbProvider>
+  );
+}
+
+function RootComponent() {
+  return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryClientProvider client={queryClient}>
-        <BreadcrumbProvider>
-          <SidebarProvider defaultOpen={true}>
-            <AppSidebar />
-            <SidebarInset>
-              <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-                <SidebarTrigger className="-ml-1" />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <AppBreadcrumbs />
-              </header>
-              <main className="flex flex-1 flex-col">
-                <Outlet />
-              </main>
-              <NowPlaying />
-            </SidebarInset>
-          </SidebarProvider>
-        </BreadcrumbProvider>
+        <AppShell />
         <Toaster />
         <ReactQueryDevtools initialIsOpen={false} />
         <TanStackRouterDevtools position="bottom-right" />
