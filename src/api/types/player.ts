@@ -161,6 +161,14 @@ export interface GetPlayerItemResponse {
     year?: number;
     duration?: number;
     file?: string;
+    thumbnail?: string;
+    art?: {
+      poster?: string;
+      fanart?: string;
+      thumb?: string;
+      clearlogo?: string;
+      [key: string]: string | undefined;
+    };
   };
 }
 

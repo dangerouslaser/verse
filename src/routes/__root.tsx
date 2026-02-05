@@ -10,6 +10,8 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/s
 import { Separator } from '@/components/ui/separator';
 import { ThemeProvider } from '@/components/theme-provider';
 import { NowPlaying } from '@/components/player/NowPlaying';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useKodiWebSocket } from '@/api/hooks/useKodiWebSocket';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,6 +24,9 @@ const queryClient = new QueryClient({
 });
 
 function RootComponent() {
+  useKeyboardShortcuts();
+  useKodiWebSocket();
+
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryClientProvider client={queryClient}>

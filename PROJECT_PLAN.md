@@ -477,7 +477,7 @@ export class KodiWebSocket {
 
 ## Implementation Phases
 
-### Phase 0: Foundation (Weeks 1-2) - ✅ COMPLETE
+### Phase 0: Foundation — ✅ COMPLETE
 
 **Goal**: Set up development environment and core infrastructure
 
@@ -486,88 +486,109 @@ export class KodiWebSocket {
 1. ✅ Initialize Vite + React + TypeScript project
 2. ✅ Configure Tailwind CSS and shadcn/ui
 3. ✅ Set up ESLint, Prettier, Husky
-4. ⏳ Configure Vitest and Testing Library
+4. ✅ Configure Vitest and Testing Library
 5. ✅ Implement JSON-RPC client with TypeScript types
-6. ⏳ Create connection status detection
+6. ✅ Create connection status detection
 7. ✅ Set up TanStack Query with WebSocket integration
 8. ✅ Create basic layout and routing structure
 9. ⏳ Implement settings storage (localStorage)
 10. ✅ Create dark/light theme system (shadcn/ui default)
 
 **Completed**:
-- React 19 + TypeScript + Vite development environment
+
+- React 19 + TypeScript 5.8 + Vite 7 development environment
 - TanStack Router with file-based routing
-- TanStack Query for data fetching
-- shadcn/ui component library with dark mode
+- TanStack Query for data fetching with 5-minute stale time
+- shadcn/ui component library with dark/light/system theme
 - Kodi JSON-RPC client with proper authentication
 - Vite proxy configuration for development
-- Basic project structure and architecture
+- Sidebar layout with breadcrumb navigation
+- Vitest + Testing Library test infrastructure
+- Husky + lint-staged pre-commit hooks
+- ESLint strict type-checked configuration
 
-**Deliverable**: Running development environment with Kodi connection - ✅
+**Deliverable**: Running development environment with Kodi connection — ✅
 
 ---
 
-### Phase 1: Movies & TV Shows (Weeks 3-5) - IN PROGRESS
+### Phase 1: Movies & TV Shows — ✅ COMPLETE
 
 **Goal**: Complete video library implementation
 
 **Tasks**:
 
 1. ✅ Movies list with infinite scrolling and filtering
-2. ⏳ Movie detail page with metadata (route placeholder exists)
-3. ⏳ TV Shows list (route placeholder exists)
-4. ⏳ TV Show detail with seasons
-5. ⏳ Season view with episodes
-6. ⏳ Episode detail pages
-7. ✅ Video metadata (ratings, artwork) - partial implementation
-8. ✅ Watched status tracking
-9. ✅ Resume functionality indicator
-10. ⏳ Basic playback controls (Kodi mode)
+2. ✅ Movie detail page with full metadata
+3. ✅ TV Shows list with filtering and sorting
+4. ✅ TV Show detail with seasons
+5. ✅ Season view with episodes
+6. ✅ Episode detail pages
+7. ✅ Video metadata (ratings, artwork, cast, writers)
+8. ✅ Watched status tracking with toggle
+9. ✅ Resume functionality indicator and button
+10. ✅ Basic playback controls (Kodi mode)
 11. ✅ Poster/fanart display with fallbacks
 
 **Completed Features**:
+
 - Movie browsing with infinite scroll (pagination of 100 items)
 - Search, genre filtering, and sorting (title, year, rating, date added)
 - Movie cards with posters, ratings, watched indicators
-- Movie detail pages with fanart header and clearlogo overlay
+- Movie detail pages with fanart header, clearlogo overlay, cast, writers, metadata
+- Watched toggle for movies and episodes
+- TV Shows browsing with infinite scroll, search, genre filtering, sorting
+- TV Show detail pages with season list
+- Season detail pages with episode list
+- Episode detail pages with metadata
+- Resume button and play button for movies and episodes
 - Edit Artwork button (UI placeholder for future TMDB/Fanart.TV integration)
-- Navigation system (Movies, TV Shows, Settings)
+- Navigation system with sidebar (Movies, TV Shows, Settings)
 - Proper Kodi image proxy configuration
 - shadcn/ui component integration
+- List and grid view modes
 
-**Next Steps**:
-- Add TV Shows browsing
-- Implement playback controls
-- Complete movie detail features
-
-**Deliverable**: Full video library browsing with basic playback
-
-**Rationale**: Starting with Movies/TV Shows since they represent the user's primary content (3,866 movies, 904 TV shows) and provide immediate value for testing.
+**Deliverable**: Full video library browsing with basic playback — ✅
 
 ---
 
-### Phase 2: Player & Playback (Weeks 6-7)
+### Phase 2: Player & Playback — ✅ COMPLETE
 
-**Goal**: Implement dual-player system and controls
+**Goal**: Implement player system with controls and real-time updates
 
 **Tasks**:
 
-1. Player state management (Zustand)
-2. Kodi player controls (play, pause, skip, seek)
-3. Local video player (React Player)
-4. Player mode toggle UI
-5. Now playing display
-6. Progress tracking
-7. Volume controls
-8. Playlist display (current queue)
-9. WebSocket real-time updates
-10. Keyboard shortcuts (space, arrow keys)
+1. ✅ Player state management (Zustand store)
+2. ✅ Kodi player controls (play, pause, skip, seek, stop)
+3. ⏳ Local video player (React Player) — stretch goal for future phase
+4. ⏳ Player mode toggle UI — stretch goal for future phase
+5. ✅ Now playing footer bar (artwork, title, transport controls, seek, volume)
+6. ✅ Progress tracking with draggable seek bar
+7. ✅ Volume controls with mute toggle
+8. ✅ Playlist/queue display with remove and clear
+9. ✅ WebSocket real-time updates with auto-reconnect
+10. ✅ Keyboard shortcuts (space, arrows, M, N, P, S, F)
 
-**Deliverable**: Working dual-player system with full controls
+**Completed Features**:
+
+- Zustand player store syncing playback state across routes
+- Persistent NowPlaying footer bar: artwork, title/subtitle, prev/play-pause/next/stop, seek bar, time display, volume slider, expand button
+- Full `/player` page: large artwork with blurred fanart background, full transport controls (shuffle, prev, play/pause, next, repeat, stop), seek bar with time, volume control, stream info (codec, resolution, audio channels)
+- PlaylistQueue component: current queue display, highlight active item, remove individual items, clear queue, play from position
+- SeekBar component: click-to-seek, drag-to-scrub, hover time preview, thin and default sizes
+- VolumeControl component: slider with mute toggle, dynamic icon based on level
+- 12 new API hooks: usePlayerItem, useVolume, useSetVolume, useToggleMute, useSkipNext, useSkipPrevious, useSetRepeat, useSetShuffle, usePlaylist, useRemoveFromPlaylist, useClearPlaylist, useGoToPlaylistPosition
+- WebSocket connection to Kodi port 9090 with exponential backoff reconnection (1s-30s)
+- Real-time query cache invalidation on Player, Application, Playlist, and VideoLibrary notifications
+- Global keyboard shortcuts (only active when no input/textarea focused)
+- Episode titles formatted with show name and S##E## notation
+
+**Deliverable**: Working Kodi remote player with real-time updates — ✅
+
+**Note**: Local browser streaming (dual player mode) deferred to a future phase.
 
 ---
 
-### Phase 3: Music Library (Weeks 8-10)
+### Phase 3: Music Library — UP NEXT
 
 **Goal**: Implement complete music browsing experience
 
@@ -1055,30 +1076,26 @@ export class KodiWebSocket {
 
 ---
 
-## Next Steps
+## Current Status
 
-### Immediate Actions
+Phases 0-2 are complete. The application has a working video library (movies and TV shows) with full player controls, real-time WebSocket updates, and keyboard shortcuts. It builds as a Kodi addon and runs as a standalone web app during development.
 
-1. **Repository setup** - Decide between new `xbmc/verse` repo or continue in current location
-2. **Set up project infrastructure** (Phase 0)
-3. **Design system exploration** (mockups/wireframes)
-4. **Community announcement** - Introduce "Verse" as Chorus2's successor
-5. **Recruit contributors** (post on forums, Reddit)
+### What's Done
 
-### First 30 Days
+- Foundation: React 19 + TypeScript + Vite 7 + TanStack Router/Query + shadcn/ui
+- Movies: browse, search, filter, sort, detail pages, watched toggle, play/resume
+- TV Shows: browse with seasons and episodes, detail pages, watched toggle
+- Player: footer bar, full player page, seek, volume, queue, keyboard shortcuts
+- WebSocket: real-time sync with Kodi notifications
+- Testing: 127 tests across 9 test files, all passing
+- Build: TypeScript strict mode, ESLint strict type-checked, production build ~493KB JS + 62KB CSS
 
-1. Complete Phase 0 (Foundation)
-2. Begin Phase 1 (Music Library)
-3. Create demo video
-4. Set up CI/CD pipeline
-5. Establish testing strategy
+### Next Steps
 
-### First 90 Days
-
-1. Complete Phases 1-3 (Music, Player, Videos)
-2. Alpha release for community testing
-3. Collect initial feedback
-4. Refine architecture based on learnings
+1. **Phase 3: Music Library** — Artists, albums, songs, virtual scrolling
+2. **Phase 4: Playlists** — Advanced queue management, drag-to-reorder
+3. **Phase 5: Search** — Global search across all media types
+4. Local browser streaming (dual player mode) — stretch goal
 
 ---
 

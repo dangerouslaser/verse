@@ -9,6 +9,7 @@ import type {
   PlayOptions,
   GetActivePlayersResponse,
   GetPlayerPropertiesResponse,
+  GetPlayerItemResponse,
 } from '@/api/types/player';
 import { PLAYER_PROPERTIES } from '@/api/types/player';
 import { toast } from 'sonner';
@@ -113,6 +114,259 @@ export function useSeek(
       return response;
     },
     ...options,
+  });
+}
+
+/**
+ * Hook to get the currently playing item
+ */
+export function usePlayerItem(playerId: number | undefined) {
+  return useQuery({
+    queryKey: ['player', 'item', playerId],
+    queryFn: async () => {
+      if (playerId === undefined) {
+        throw new Error('Player ID is required');
+      }
+
+      const response = await kodi.call<GetPlayerItemResponse>('Player.GetItem', {
+        playerid: playerId,
+        properties: [
+          'title',
+          'album',
+          'artist',
+          'season',
+          'episode',
+          'showtitle',
+          'year',
+          'duration',
+          'file',
+          'thumbnail',
+          'art',
+        ],
+      });
+      return response;
+    },
+    enabled: playerId !== undefined,
+    refetchInterval: 5000,
+    staleTime: 2000,
+  });
+}
+
+/**
+ * Hook to get application volume
+ */
+export function useVolume() {
+  return useQuery({
+    queryKey: ['application', 'volume'],
+    queryFn: async () => {
+      const response = await kodi.call<{ volume: number; muted: boolean }>(
+        'Application.GetProperties',
+        { properties: ['volume', 'muted'] }
+      );
+      return response;
+    },
+    refetchInterval: 5000,
+    staleTime: 2000,
+  });
+}
+
+/**
+ * Hook to set application volume
+ */
+export function useSetVolume() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (volume: number) => {
+      const response = await kodi.call<number>('Application.SetVolume', {
+        volume: Math.round(Math.max(0, Math.min(100, volume))),
+      });
+      return response;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['application', 'volume'] });
+    },
+  });
+}
+
+/**
+ * Hook to toggle mute
+ */
+export function useToggleMute() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await kodi.call<boolean>('Application.SetMute', {
+        mute: 'toggle',
+      });
+      return response;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['application', 'volume'] });
+    },
+  });
+}
+
+/**
+ * Hook to skip to next item
+ */
+export function useSkipNext(options?: UseMutationOptions<string, Error, number>) {
+  return useMutation({
+    mutationFn: async (playerId: number) => {
+      const response = await kodi.call<string>('Player.GoTo', {
+        playerid: playerId,
+        to: 'next',
+      });
+      return response;
+    },
+    ...options,
+  });
+}
+
+/**
+ * Hook to skip to previous item
+ */
+export function useSkipPrevious(options?: UseMutationOptions<string, Error, number>) {
+  return useMutation({
+    mutationFn: async (playerId: number) => {
+      const response = await kodi.call<string>('Player.GoTo', {
+        playerid: playerId,
+        to: 'previous',
+      });
+      return response;
+    },
+    ...options,
+  });
+}
+
+/**
+ * Hook to cycle repeat mode
+ */
+export function useSetRepeat() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (playerId: number) => {
+      const response = await kodi.call<string>('Player.SetRepeat', {
+        playerid: playerId,
+        repeat: 'cycle',
+      });
+      return response;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['player', 'properties'] });
+    },
+  });
+}
+
+/**
+ * Hook to toggle shuffle
+ */
+export function useSetShuffle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (playerId: number) => {
+      const response = await kodi.call<string>('Player.SetShuffle', {
+        playerid: playerId,
+        shuffle: 'toggle',
+      });
+      return response;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['player', 'properties'] });
+    },
+  });
+}
+
+/**
+ * Hook to get playlist items
+ */
+export function usePlaylist(playlistId: number | undefined) {
+  return useQuery({
+    queryKey: ['playlist', playlistId],
+    queryFn: async () => {
+      if (playlistId === undefined) {
+        throw new Error('Playlist ID is required');
+      }
+
+      const response = await kodi.call<{
+        items?: Array<{
+          id: number;
+          type: string;
+          label: string;
+          title?: string;
+          artist?: string[];
+          album?: string;
+          duration?: number;
+          file?: string;
+          thumbnail?: string;
+        }>;
+        limits: { start: number; end: number; total: number };
+      }>('Playlist.GetItems', {
+        playlistid: playlistId,
+        properties: ['title', 'artist', 'album', 'duration', 'file', 'thumbnail'],
+      });
+      return response.items ?? [];
+    },
+    enabled: playlistId !== undefined,
+    refetchInterval: 5000,
+    staleTime: 2000,
+  });
+}
+
+/**
+ * Hook to remove item from playlist
+ */
+export function useRemoveFromPlaylist() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ playlistId, position }: { playlistId: number; position: number }) => {
+      const response = await kodi.call<string>('Playlist.Remove', {
+        playlistid: playlistId,
+        position,
+      });
+      return response;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['playlist'] });
+    },
+  });
+}
+
+/**
+ * Hook to clear a playlist
+ */
+export function useClearPlaylist() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (playlistId: number) => {
+      const response = await kodi.call<string>('Playlist.Clear', {
+        playlistid: playlistId,
+      });
+      return response;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['playlist'] });
+    },
+  });
+}
+
+/**
+ * Hook to go to a specific position in the playlist
+ */
+export function useGoToPlaylistPosition() {
+  return useMutation({
+    mutationFn: async ({ playerId, position }: { playerId: number; position: number }) => {
+      const response = await kodi.call<string>('Player.GoTo', {
+        playerid: playerId,
+        to: position,
+      });
+      return response;
+    },
   });
 }
 

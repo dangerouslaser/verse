@@ -11,8 +11,15 @@ import * as playbackHooks from '@/api/hooks/usePlayback';
 vi.mock('@/api/hooks/usePlayback', () => ({
   useActivePlayers: vi.fn(),
   usePlayerProperties: vi.fn(),
+  usePlayerItem: vi.fn(),
   usePlayPause: vi.fn(),
   useStop: vi.fn(),
+  useSkipNext: vi.fn(),
+  useSkipPrevious: vi.fn(),
+  useSeek: vi.fn(),
+  useVolume: vi.fn(),
+  useSetVolume: vi.fn(),
+  useToggleMute: vi.fn(),
 }));
 
 // Mock toast
@@ -22,22 +29,110 @@ vi.mock('sonner', () => ({
   },
 }));
 
+// Mock the Zustand store
+vi.mock('@/stores/player', () => ({
+  usePlayerStore: vi.fn(() => ({
+    setPlayer: vi.fn(),
+    setCurrentItem: vi.fn(),
+    syncPlaybackState: vi.fn(),
+    setVolume: vi.fn(),
+  })),
+}));
+
+// Mock TanStack Router Link
+vi.mock('@tanstack/react-router', () => ({
+  Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+}));
+
+// Mock child components to simplify tests
+vi.mock('./SeekBar', () => ({
+  SeekBar: ({ percentage }: { percentage: number }) => (
+    <div data-testid="seek-bar" data-percentage={percentage} />
+  ),
+}));
+
+vi.mock('./VolumeControl', () => ({
+  VolumeControl: () => <div data-testid="volume-control" />,
+}));
+
+// Mock image utils
+vi.mock('@/lib/image-utils', () => ({
+  getImageUrl: (url: string) => url,
+}));
+
+const defaultMutationReturn = {
+  mutate: vi.fn(),
+  isPending: false,
+  mutateAsync: vi.fn(),
+  isIdle: true,
+  isSuccess: false,
+  isError: false,
+  data: undefined,
+  error: null,
+  reset: vi.fn(),
+  status: 'idle',
+  variables: undefined,
+  failureCount: 0,
+  failureReason: null,
+  context: undefined,
+  isPaused: false,
+  submittedAt: 0,
+};
+
 describe('NowPlaying', () => {
   const mockPlayPauseMutate = vi.fn();
   const mockStopMutate = vi.fn();
+  const mockSkipNextMutate = vi.fn();
+  const mockSkipPrevMutate = vi.fn();
+  const mockSeekMutate = vi.fn();
+  const mockSetVolumeMutate = vi.fn();
+  const mockToggleMuteMutate = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     // Default mock implementations
     vi.mocked(playbackHooks.usePlayPause).mockReturnValue({
+      ...defaultMutationReturn,
       mutate: mockPlayPauseMutate,
-      isPending: false,
     } as any);
 
     vi.mocked(playbackHooks.useStop).mockReturnValue({
+      ...defaultMutationReturn,
       mutate: mockStopMutate,
-      isPending: false,
+    } as any);
+
+    vi.mocked(playbackHooks.useSkipNext).mockReturnValue({
+      ...defaultMutationReturn,
+      mutate: mockSkipNextMutate,
+    } as any);
+
+    vi.mocked(playbackHooks.useSkipPrevious).mockReturnValue({
+      ...defaultMutationReturn,
+      mutate: mockSkipPrevMutate,
+    } as any);
+
+    vi.mocked(playbackHooks.useSeek).mockReturnValue({
+      ...defaultMutationReturn,
+      mutate: mockSeekMutate,
+    } as any);
+
+    vi.mocked(playbackHooks.useSetVolume).mockReturnValue({
+      ...defaultMutationReturn,
+      mutate: mockSetVolumeMutate,
+    } as any);
+
+    vi.mocked(playbackHooks.useToggleMute).mockReturnValue({
+      ...defaultMutationReturn,
+      mutate: mockToggleMuteMutate,
+    } as any);
+
+    vi.mocked(playbackHooks.usePlayerItem).mockReturnValue({
+      data: undefined,
+    } as any);
+
+    vi.mocked(playbackHooks.useVolume).mockReturnValue({
+      data: { volume: 80, muted: false },
     } as any);
   });
 
@@ -77,13 +172,21 @@ describe('NowPlaying', () => {
         totaltime: { hours: 1, minutes: 0, seconds: 30 },
       },
     } as any);
+    vi.mocked(playbackHooks.usePlayerItem).mockReturnValue({
+      data: {
+        item: {
+          id: 1,
+          type: 'movie',
+          label: 'Test Movie',
+          title: 'Test Movie',
+        },
+      },
+    } as any);
 
     render(<NowPlaying />);
 
-    expect(screen.getByText('Playing Video')).toBeInTheDocument();
+    expect(screen.getByText('Test Movie')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Pause' })).toBeInTheDocument();
-    expect(screen.getByText(/30:15/)).toBeInTheDocument();
-    expect(screen.getByText(/1:00:30/)).toBeInTheDocument();
   });
 
   it('renders paused state correctly', () => {
@@ -171,10 +274,12 @@ describe('NowPlaying', () => {
       },
     } as any);
     vi.mocked(playbackHooks.usePlayPause).mockReturnValue({
+      ...defaultMutationReturn,
       mutate: mockPlayPauseMutate,
       isPending: true,
     } as any);
     vi.mocked(playbackHooks.useStop).mockReturnValue({
+      ...defaultMutationReturn,
       mutate: mockStopMutate,
       isPending: true,
     } as any);
@@ -188,63 +293,7 @@ describe('NowPlaying', () => {
     expect(stopButton).toBeDisabled();
   });
 
-  it('formats time with hours correctly', () => {
-    vi.mocked(playbackHooks.useActivePlayers).mockReturnValue({
-      data: [{ playerid: 1, type: 'video' }],
-    } as any);
-    vi.mocked(playbackHooks.usePlayerProperties).mockReturnValue({
-      data: {
-        speed: 1,
-        percentage: 50,
-        time: { hours: 1, minutes: 30, seconds: 45 },
-        totaltime: { hours: 2, minutes: 15, seconds: 30 },
-      },
-    } as any);
-
-    render(<NowPlaying />);
-
-    expect(screen.getByText(/1:30:45/)).toBeInTheDocument();
-    expect(screen.getByText(/2:15:30/)).toBeInTheDocument();
-  });
-
-  it('formats time without hours correctly', () => {
-    vi.mocked(playbackHooks.useActivePlayers).mockReturnValue({
-      data: [{ playerid: 1, type: 'video' }],
-    } as any);
-    vi.mocked(playbackHooks.usePlayerProperties).mockReturnValue({
-      data: {
-        speed: 1,
-        percentage: 50,
-        time: { hours: 0, minutes: 5, seconds: 30 },
-        totaltime: { hours: 0, minutes: 10, seconds: 0 },
-      },
-    } as any);
-
-    render(<NowPlaying />);
-
-    expect(screen.getByText(/5:30/)).toBeInTheDocument();
-    expect(screen.getByText(/10:00/)).toBeInTheDocument();
-  });
-
-  it('displays audio player type', () => {
-    vi.mocked(playbackHooks.useActivePlayers).mockReturnValue({
-      data: [{ playerid: 1, type: 'audio' }],
-    } as any);
-    vi.mocked(playbackHooks.usePlayerProperties).mockReturnValue({
-      data: {
-        speed: 1,
-        percentage: 50,
-        time: { hours: 0, minutes: 2, seconds: 30 },
-        totaltime: { hours: 0, minutes: 5, seconds: 0 },
-      },
-    } as any);
-
-    render(<NowPlaying />);
-
-    expect(screen.getByText('Playing Audio')).toBeInTheDocument();
-  });
-
-  it('displays progress bar with correct percentage', () => {
+  it('renders seek bar with correct percentage', () => {
     vi.mocked(playbackHooks.useActivePlayers).mockReturnValue({
       data: [{ playerid: 1, type: 'video' }],
     } as any);
@@ -257,28 +306,123 @@ describe('NowPlaying', () => {
       },
     } as any);
 
-    const { container } = render(<NowPlaying />);
+    render(<NowPlaying />);
 
-    const progressBar = container.querySelector('.bg-primary');
-    expect(progressBar).toHaveStyle({ width: '75%' });
+    const seekBar = screen.getByTestId('seek-bar');
+    expect(seekBar).toHaveAttribute('data-percentage', '75');
   });
 
-  it('handles zero percentage', () => {
+  it('displays item title from player item data', () => {
     vi.mocked(playbackHooks.useActivePlayers).mockReturnValue({
       data: [{ playerid: 1, type: 'video' }],
     } as any);
     vi.mocked(playbackHooks.usePlayerProperties).mockReturnValue({
       data: {
         speed: 1,
-        percentage: 0,
-        time: { hours: 0, minutes: 0, seconds: 0 },
+        percentage: 50,
+        time: { hours: 0, minutes: 30, seconds: 0 },
+        totaltime: { hours: 1, minutes: 0, seconds: 0 },
+      },
+    } as any);
+    vi.mocked(playbackHooks.usePlayerItem).mockReturnValue({
+      data: {
+        item: {
+          id: 42,
+          type: 'movie',
+          label: 'The Matrix',
+          title: 'The Matrix',
+        },
+      },
+    } as any);
+
+    render(<NowPlaying />);
+
+    expect(screen.getByText('The Matrix')).toBeInTheDocument();
+    expect(screen.getByText('Movie')).toBeInTheDocument();
+  });
+
+  it('displays episode title with show name', () => {
+    vi.mocked(playbackHooks.useActivePlayers).mockReturnValue({
+      data: [{ playerid: 1, type: 'video' }],
+    } as any);
+    vi.mocked(playbackHooks.usePlayerProperties).mockReturnValue({
+      data: {
+        speed: 1,
+        percentage: 50,
+        time: { hours: 0, minutes: 20, seconds: 0 },
+        totaltime: { hours: 0, minutes: 45, seconds: 0 },
+      },
+    } as any);
+    vi.mocked(playbackHooks.usePlayerItem).mockReturnValue({
+      data: {
+        item: {
+          id: 10,
+          type: 'episode',
+          label: 'Pilot',
+          title: 'Pilot',
+          showtitle: 'Breaking Bad',
+          season: 1,
+          episode: 1,
+        },
+      },
+    } as any);
+
+    render(<NowPlaying />);
+
+    expect(screen.getByText('Pilot')).toBeInTheDocument();
+    expect(screen.getByText('Breaking Bad - S01E01')).toBeInTheDocument();
+  });
+
+  it('handles next and previous button clicks', async () => {
+    const user = userEvent.setup();
+    vi.mocked(playbackHooks.useActivePlayers).mockReturnValue({
+      data: [{ playerid: 1, type: 'video' }],
+    } as any);
+    vi.mocked(playbackHooks.usePlayerProperties).mockReturnValue({
+      data: {
+        speed: 1,
+        percentage: 50,
+        time: { hours: 0, minutes: 30, seconds: 0 },
         totaltime: { hours: 1, minutes: 0, seconds: 0 },
       },
     } as any);
 
-    const { container } = render(<NowPlaying />);
+    render(<NowPlaying />);
 
-    const progressBar = container.querySelector('.bg-primary');
-    expect(progressBar).toHaveStyle({ width: '0%' });
+    const nextButton = screen.getByRole('button', { name: 'Next' });
+    await user.click(nextButton);
+    expect(mockSkipNextMutate).toHaveBeenCalledWith(
+      1,
+      expect.objectContaining({ onError: expect.any(Function) })
+    );
+
+    const prevButton = screen.getByRole('button', { name: 'Previous' });
+    await user.click(prevButton);
+    expect(mockSkipPrevMutate).toHaveBeenCalledWith(
+      1,
+      expect.objectContaining({ onError: expect.any(Function) })
+    );
+  });
+
+  it('shows fallback title when no player item data', () => {
+    vi.mocked(playbackHooks.useActivePlayers).mockReturnValue({
+      data: [{ playerid: 1, type: 'audio' }],
+    } as any);
+    vi.mocked(playbackHooks.usePlayerProperties).mockReturnValue({
+      data: {
+        speed: 1,
+        percentage: 50,
+        time: { hours: 0, minutes: 2, seconds: 30 },
+        totaltime: { hours: 0, minutes: 5, seconds: 0 },
+      },
+    } as any);
+    vi.mocked(playbackHooks.usePlayerItem).mockReturnValue({
+      data: undefined,
+    } as any);
+
+    render(<NowPlaying />);
+
+    expect(screen.getByText('Playing')).toBeInTheDocument();
+    expect(screen.getByText('audio')).toBeInTheDocument();
   });
 });

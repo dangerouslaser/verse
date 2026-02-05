@@ -2,7 +2,7 @@
 
 > What comes after the Chorus
 
-A modern, fast, and beautiful web interface for Kodi with the goal of replacing Chorus2.
+A modern, fast, and beautiful web interface for Kodi — the successor to Chorus2.
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](LICENSE)
 
@@ -10,29 +10,38 @@ A modern, fast, and beautiful web interface for Kodi with the goal of replacing 
 
 ## Overview
 
-**Verse** is a web interface for Kodi built from the ground up with modern web technologies. The goal is to provide an alternative to Chorus2 that meets contemporary expectations while being easier to maintain and extend.
+**Verse** is a web interface for Kodi built from the ground up with modern web technologies. It provides a fast, responsive alternative to Chorus2 that meets contemporary expectations while being easier to maintain and extend.
 
-### Key Features (Planned)
+### Current Features
 
-- Complete Media Library - Browse music, movies, TV shows, and live TV
-- Dual Player Mode - Control Kodi remotely or stream directly in your browser
-- Blazing Fast - Built with Vite and optimized for performance
-- Progressive Web App - Install on any device, works offline
-- Modern Design - Clean, accessible interface with dark mode by default
-- Keyboard Shortcuts - Power user features built-in
-- Multilingual - Support for 80+ languages
-- Accessible - WCAG AA compliant
+- **Movies & TV Shows** — Browse, filter, sort, and play your full video library
+- **Player Controls** — Persistent footer bar with seek, volume, prev/next, and a dedicated full player page
+- **Real-time Updates** — WebSocket connection to Kodi keeps the UI in sync
+- **Keyboard Shortcuts** — Space, arrows, and letter keys for power users
+- **Playlist Queue** — View, reorder, and manage the current playback queue
+- **Dark Mode** — Clean, accessible interface with dark/light/system theme
+- **Kodi Addon Packaging** — Installable as a Kodi addon
+
+### Planned Features
+
+- Music library browsing
+- Global search across all media types
+- Live TV/PVR support
+- Local browser streaming (dual player mode)
+- Progressive Web App (offline, installable)
+- Multilingual support (80+ languages)
+- Add-on management
 
 ---
 
 ## Why Verse?
 
-Chorus2 has served Kodi users well, but its technology stack (CoffeeScript, Backbone, Marionette) makes it increasingly difficult to maintain and enhance. Verse aims to address this by:
+Chorus2 has served Kodi users well, but its technology stack (CoffeeScript, Backbone, Marionette) makes it increasingly difficult to maintain and enhance. Verse addresses this with:
 
-- **Modern Stack**: React 18, TypeScript, Vite - technologies that attract contributors
-- **Type Safety**: Full TypeScript implementation prevents bugs and improves maintainability
-- **Better Performance**: Virtual scrolling, code splitting, and optimized caching
-- **Mobile First**: Responsive design that works beautifully on all devices
+- **Modern Stack**: React 19, TypeScript, Vite 7 — technologies that attract contributors
+- **Type Safety**: Full TypeScript with strict mode prevents bugs and improves maintainability
+- **Better Performance**: Code splitting, optimized caching, and efficient rendering
+- **Mobile First**: Responsive design that works on all devices
 - **Developer Experience**: Hot reload, modern tooling, clear architecture
 
 ---
@@ -41,22 +50,22 @@ Chorus2 has served Kodi users well, but its technology stack (CoffeeScript, Back
 
 ### Core
 
-- **Framework**: [React 18](https://react.dev) with [TypeScript](https://www.typescriptlang.org)
-- **Build Tool**: [Vite](https://vitejs.dev) - Lightning-fast HMR
-- **Styling**: [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS
-- **Components**: [shadcn/ui](https://ui.shadcn.com) - Accessible, customizable components
+- **Framework**: [React 19](https://react.dev) with [TypeScript 5.8](https://www.typescriptlang.org)
+- **Build Tool**: [Vite 7](https://vitejs.dev) — Lightning-fast HMR
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com) — Utility-first CSS
+- **Components**: [shadcn/ui](https://ui.shadcn.com) — Accessible, customizable components
 
 ### State & Data
 
-- **API Layer**: [TanStack Query](https://tanstack.com/query) - Powerful data synchronization
-- **Client State**: [Zustand](https://zustand-demo.pmnd.rs) - Simple, scalable state management
-- **Real-time**: Native WebSocket with automatic reconnection
+- **API Layer**: [TanStack Query](https://tanstack.com/query) — Data synchronization with automatic caching
+- **Client State**: [Zustand](https://zustand-demo.pmnd.rs) — Simple, scalable state management
+- **Real-time**: Native WebSocket with automatic reconnection and exponential backoff
 
 ### Additional
 
-- **Routing**: [TanStack Router](https://tanstack.com/router) - Type-safe routing
+- **Routing**: [TanStack Router](https://tanstack.com/router) — Type-safe file-based routing
 - **Forms**: [React Hook Form](https://react-hook-form.com) + [Zod](https://zod.dev)
-- **i18n**: [i18next](https://www.i18next.com) - Internationalization
+- **i18n**: [i18next](https://www.i18next.com) — Internationalization
 - **Testing**: [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com)
 - **Icons**: [Lucide React](https://lucide.dev)
 
@@ -155,33 +164,44 @@ Contributions are welcome!
 
 ## Roadmap
 
-### Phase 0: Foundation - **IN PROGRESS**
+### Phase 0: Foundation — COMPLETE
 
-- Project structure and tooling setup
-- JSON-RPC client implementation
-- Basic layout and routing
-- Connection management
+- Project structure, tooling, and build pipeline
+- JSON-RPC client with Kodi authentication
+- TanStack Router, Query, and shadcn/ui integration
+- Dark/light/system theme support
 
-### Phase 1: Music Library
+### Phase 1: Movies & TV Shows — COMPLETE
+
+- Full movie browsing with infinite scroll, search, genre filtering, and sorting
+- Movie detail pages with fanart, cast, metadata, and watched toggle
+- TV show browsing with seasons and episodes
+- Resume and play functionality
+- Poster/fanart display with image proxying
+
+### Phase 2: Player & Playback — COMPLETE
+
+- Persistent footer bar (artwork, title, transport controls, seek, volume)
+- Full `/player` page with large artwork, stream info, and playlist queue
+- Zustand player store for cross-route state
+- WebSocket real-time updates from Kodi
+- Keyboard shortcuts (space, arrows, M/N/P/S/F)
+
+### Phase 3: Music Library — UP NEXT
 
 - Artists, albums, and songs browsing
 - Search and filtering
 - Virtual scrolling for large libraries
 
-### Phase 2: Player & Playback
-
-- Dual player mode (Kodi + Local)
-- Playback controls
-- Real-time status updates
-
 ### Coming Later
 
-- Movies & TV Shows
-- Playlists & Queue Management
+- Playlists & advanced queue management
+- Global search across all media types
+- Settings management
 - Live TV/PVR
 - Add-ons
-- Settings Management
-- PWA Features
+- Local browser streaming (dual player mode)
+- PWA features
 
 [View complete roadmap](PROJECT_PLAN.md)
 
