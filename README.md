@@ -1,6 +1,6 @@
 # Verse
 
-> What comes after the Chorus in a song
+> What comes after the Chorus
 
 A modern, fast, and beautiful web interface for Kodi with the goal of replacing Chorus2.
 
