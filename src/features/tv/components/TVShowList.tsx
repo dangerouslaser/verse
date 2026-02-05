@@ -100,7 +100,7 @@ export function TVShowList() {
             <Skeleton className="h-10 w-48" />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8">
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="space-y-2">
               <Skeleton className="aspect-[2/3] w-full" />
@@ -191,7 +191,7 @@ export function TVShowList() {
       ) : (
         <>
           {viewMode === 'grid' ? (
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8">
               {tvshows.map((tvshow) => (
                 <TVShowCard key={tvshow.tvshowid} tvshow={tvshow} />
               ))}
@@ -207,7 +207,7 @@ export function TVShowList() {
           {/* Loading indicator */}
           <div ref={observerTarget} className="mt-8 flex justify-center">
             {isFetchingNextPage && (
-              <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="space-y-2">
                     <Skeleton className="aspect-[2/3] w-full" />
