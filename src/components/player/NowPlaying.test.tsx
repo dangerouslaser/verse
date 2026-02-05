@@ -30,14 +30,21 @@ vi.mock('sonner', () => ({
 }));
 
 // Mock the Zustand store
-vi.mock('@/stores/player', () => ({
-  usePlayerStore: vi.fn(() => ({
+vi.mock('@/stores/player', () => {
+  const storeState = {
     setPlayer: vi.fn(),
     setCurrentItem: vi.fn(),
     syncPlaybackState: vi.fn(),
     setVolume: vi.fn(),
-  })),
-}));
+  };
+  const usePlayerStore = Object.assign(
+    vi.fn(() => storeState),
+    {
+      getState: vi.fn(() => storeState),
+    }
+  );
+  return { usePlayerStore };
+});
 
 // Mock TanStack Router Link
 vi.mock('@tanstack/react-router', () => ({

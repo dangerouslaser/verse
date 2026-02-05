@@ -61,6 +61,41 @@ export function SeekBar({
     [disabled, getPercentageFromEvent, onSeek]
   );
 
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (disabled) return;
+      const touch = e.touches[0];
+      if (!touch) return;
+      setIsDragging(true);
+      const pct = getPercentageFromEvent(touch.clientX);
+      setDragPercentage(pct);
+
+      const handleTouchMove = (ev: TouchEvent) => {
+        const t = ev.touches[0];
+        if (!t) return;
+        ev.preventDefault();
+        const p = getPercentageFromEvent(t.clientX);
+        setDragPercentage(p);
+      };
+
+      const handleTouchEnd = (ev: TouchEvent) => {
+        const t = ev.changedTouches[0];
+        if (t) {
+          const p = getPercentageFromEvent(t.clientX);
+          onSeek(p);
+        }
+        setIsDragging(false);
+        setDragPercentage(null);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
+      };
+
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
+    },
+    [disabled, getPercentageFromEvent, onSeek]
+  );
+
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
       if (disabled) return;
@@ -76,6 +111,9 @@ export function SeekBar({
 
   const displayPercentage = dragPercentage ?? percentage;
   const hoverTime = hoverPercentage !== null ? (hoverPercentage / 100) * totalTime : null;
+
+  // Clamp tooltip so it doesn't overflow the container edges
+  const tooltipLeft = hoverPercentage !== null ? Math.max(3, Math.min(97, hoverPercentage)) : 0;
 
   const barHeight = size === 'sm' ? 'h-1 group-hover:h-2' : 'h-2';
   const thumbSize = size === 'sm' ? 'h-3 w-3' : 'h-4 w-4';
@@ -97,6 +135,7 @@ export function SeekBar({
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
         role="slider"
         aria-valuemin={0}
         aria-valuemax={100}
@@ -109,7 +148,7 @@ export function SeekBar({
           <div
             className="bg-popover text-popover-foreground absolute -top-8 z-10 rounded px-2 py-0.5 text-xs shadow-md"
             style={{
-              left: `${String(hoverPercentage)}%`,
+              left: `${String(tooltipLeft)}%`,
               transform: 'translateX(-50%)',
             }}
           >

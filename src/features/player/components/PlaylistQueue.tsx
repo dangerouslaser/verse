@@ -8,19 +8,8 @@ import {
   useClearPlaylist,
   useGoToPlaylistPosition,
 } from '@/api/hooks/usePlayback';
+import type { PlaylistItem } from '@/api/types/player';
 import { toast } from 'sonner';
-
-interface PlaylistItem {
-  id: number;
-  type: string;
-  label: string;
-  title?: string;
-  artist?: string[];
-  album?: string;
-  duration?: number;
-  file?: string;
-  thumbnail?: string;
-}
 
 interface PlaylistQueueProps {
   items: PlaylistItem[];

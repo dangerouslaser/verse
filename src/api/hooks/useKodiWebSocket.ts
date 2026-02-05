@@ -1,22 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { kodiWebSocket } from '@/api/websocket';
 
+/**
+ * Subscribe to WebSocket connection state from any component.
+ * Uses useSyncExternalStore to stay in sync with the singleton.
+ */
+export function useKodiConnectionStatus() {
+  return useSyncExternalStore(
+    (callback) => kodiWebSocket.subscribe(callback),
+    () => kodiWebSocket.isConnected
+  );
+}
+
 export function useKodiWebSocket() {
   const queryClient = useQueryClient();
-  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     const unsubscribe = kodiWebSocket.onNotification((method, _data) => {
       switch (method) {
-        case 'Internal.OnConnect':
-          setIsConnected(true);
-          break;
-
-        case 'Internal.OnDisconnect':
-          setIsConnected(false);
-          break;
-
         // Player notifications
         case 'Player.OnPlay':
         case 'Player.OnResume':
@@ -79,6 +81,4 @@ export function useKodiWebSocket() {
       kodiWebSocket.disconnect();
     };
   }, [queryClient]);
-
-  return { isConnected };
 }

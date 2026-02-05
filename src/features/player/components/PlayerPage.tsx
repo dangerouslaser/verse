@@ -31,7 +31,8 @@ import { SeekBar } from '@/components/player/SeekBar';
 import { VolumeControl } from '@/components/player/VolumeControl';
 import { PlaylistQueue } from './PlaylistQueue';
 import { getImageUrl } from '@/lib/image-utils';
-import { timeToSeconds, formatEpisodeNumber } from '@/lib/format';
+import { getItemTitle, getItemDetailLink } from '@/lib/player-utils';
+import { timeToSeconds } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -87,24 +88,10 @@ export function PlayerPage() {
 
   const fanartUrl = item?.art?.fanart ? getImageUrl(item.art.fanart) : undefined;
 
-  let title = item?.title ?? item?.label ?? 'Unknown';
-  let subtitle = '';
-  let detailLink: string | undefined;
-
-  if (item?.type === 'episode' && item.showtitle) {
-    const epNum =
-      item.season !== undefined && item.episode !== undefined
-        ? formatEpisodeNumber(item.season, item.episode)
-        : '';
-    subtitle = `${item.showtitle}${epNum ? ` - ${epNum}` : ''}`;
-    detailLink = `/tv/${String(item.id)}`;
-  } else if (item?.type === 'movie') {
-    subtitle = item.year ? `Movie (${String(item.year)})` : 'Movie';
-    detailLink = `/movies/${String(item.id)}`;
-  } else {
-    title = item?.title ?? item?.label ?? 'Playing';
-    subtitle = activePlayer.type;
-  }
+  const { title, subtitle } = item
+    ? getItemTitle(item)
+    : { title: 'Playing', subtitle: activePlayer.type };
+  const detailLink = item ? getItemDetailLink(item) : undefined;
 
   const onError = (action: string) => (error: Error) => {
     toast.error('Error', { description: error.message || `Failed to ${action}` });

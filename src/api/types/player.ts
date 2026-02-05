@@ -158,6 +158,7 @@ export interface GetPlayerItemResponse {
     season?: number;
     episode?: number;
     showtitle?: string;
+    tvshowid?: number;
     year?: number;
     duration?: number;
     file?: string;
@@ -170,6 +171,21 @@ export interface GetPlayerItemResponse {
       [key: string]: string | undefined;
     };
   };
+}
+
+/**
+ * Shared playlist item type used across store, hooks, and components
+ */
+export interface PlaylistItem {
+  id: number;
+  type: string;
+  label: string;
+  title?: string;
+  artist?: string[];
+  album?: string;
+  duration?: number;
+  file?: string;
+  thumbnail?: string;
 }
 
 /**

@@ -2,9 +2,10 @@
 
 import * as React from 'react';
 import { Link } from '@tanstack/react-router';
-import { Film, Tv, Settings, Sun, Moon } from 'lucide-react';
+import { Film, Tv, Settings, Sun, Moon, Wifi, WifiOff } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { KodiLogo } from '@/components/icons/KodiLogo';
+import { useKodiConnectionStatus } from '@/api/hooks/useKodiWebSocket';
 import {
   Sidebar,
   SidebarContent,
@@ -21,6 +22,7 @@ import {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { theme, setTheme } = useTheme();
+  const isConnected = useKodiConnectionStatus();
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -81,6 +83,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip={isConnected ? 'Connected to Kodi' : 'Disconnected from Kodi'}
+            >
+              {isConnected ? (
+                <Wifi className="text-green-500" />
+              ) : (
+                <WifiOff className="text-muted-foreground" />
+              )}
+              <span className={isConnected ? 'text-green-500' : 'text-muted-foreground'}>
+                {isConnected ? 'Connected' : 'Disconnected'}
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Settings">
               <Link

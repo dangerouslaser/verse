@@ -13,6 +13,7 @@ export class KodiWebSocket {
   private ws: WebSocket | null = null;
   private url: string;
   private handlers: Set<NotificationHandler> = new Set();
+  private subscribers: Set<() => void> = new Set();
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private reconnectDelay = 1000;
   private maxReconnectDelay = 30000;
@@ -35,7 +36,7 @@ export class KodiWebSocket {
       this.ws = new WebSocket(this.url);
 
       this.ws.onopen = () => {
-        this._isConnected = true;
+        this.setConnected(true);
         this.reconnectDelay = 1000;
         this.notifyHandlers('Internal.OnConnect', null);
       };
@@ -52,7 +53,7 @@ export class KodiWebSocket {
       };
 
       this.ws.onclose = () => {
-        this._isConnected = false;
+        this.setConnected(false);
         this.notifyHandlers('Internal.OnDisconnect', null);
         this.scheduleReconnect();
       };
@@ -75,7 +76,7 @@ export class KodiWebSocket {
       this.ws.close();
       this.ws = null;
     }
-    this._isConnected = false;
+    this.setConnected(false);
   }
 
   onNotification(handler: NotificationHandler): () => void {
@@ -83,6 +84,25 @@ export class KodiWebSocket {
     return () => {
       this.handlers.delete(handler);
     };
+  }
+
+  /**
+   * Subscribe to connection state changes (for useSyncExternalStore).
+   */
+  subscribe(callback: () => void): () => void {
+    this.subscribers.add(callback);
+    return () => {
+      this.subscribers.delete(callback);
+    };
+  }
+
+  private setConnected(connected: boolean): void {
+    if (this._isConnected !== connected) {
+      this._isConnected = connected;
+      for (const callback of this.subscribers) {
+        callback();
+      }
+    }
   }
 
   private notifyHandlers(method: string, data: unknown): void {
@@ -103,16 +123,18 @@ export class KodiWebSocket {
 }
 
 function getWebSocketUrl(): string {
+  const wsPort = (import.meta.env.VITE_KODI_WS_PORT as string | undefined) ?? '9090';
+
   if (import.meta.env.DEV) {
     const kodiHost =
       (import.meta.env.VITE_KODI_HOST as string | undefined) ?? 'http://localhost:8080';
     const parsed = new URL(kodiHost);
     const wsProtocol = parsed.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${wsProtocol}//${parsed.hostname}:9090/jsonrpc`;
+    return `${wsProtocol}//${parsed.hostname}:${wsPort}/jsonrpc`;
   }
 
   const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  return `${wsProtocol}//${window.location.hostname}:9090/jsonrpc`;
+  return `${wsProtocol}//${window.location.hostname}:${wsPort}/jsonrpc`;
 }
 
 export const kodiWebSocket = new KodiWebSocket(getWebSocketUrl());

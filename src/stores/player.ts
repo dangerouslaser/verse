@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { GetPlayerItemResponse } from '@/api/types/player';
+import type { GetPlayerItemResponse, PlaylistItem } from '@/api/types/player';
 
 interface PlayerTime {
   hours: number;
@@ -18,19 +18,8 @@ interface PlayerItem {
   season?: number;
   episode?: number;
   showtitle?: string;
+  tvshowid?: number;
   year?: number;
-  duration?: number;
-  file?: string;
-  thumbnail?: string;
-}
-
-interface PlaylistItem {
-  id: number;
-  type: string;
-  label: string;
-  title?: string;
-  artist?: string[];
-  album?: string;
   duration?: number;
   file?: string;
   thumbnail?: string;
@@ -133,6 +122,7 @@ export const usePlayerStore = create<PlayerState>()((set) => ({
             season: item.season,
             episode: item.episode,
             showtitle: item.showtitle,
+            tvshowid: item.tvshowid,
             year: item.year,
             duration: item.duration,
             file: item.file,

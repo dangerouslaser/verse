@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { usePlayerStore } from '@/stores/player';
 import {
@@ -33,6 +33,29 @@ export function useKeyboardShortcuts() {
   const setVolumeMutation = useSetVolume();
   const toggleMuteMutation = useToggleMute();
 
+  // Store mutation functions in refs so the keydown effect doesn't re-run on every render
+  const mutationsRef = useRef({
+    playPause: playPauseMutation.mutate,
+    stop: stopMutation.mutate,
+    skipNext: skipNextMutation.mutate,
+    skipPrev: skipPrevMutation.mutate,
+    seek: seekMutation.mutate,
+    setVolume: setVolumeMutation.mutate,
+    toggleMute: toggleMuteMutation.mutate,
+  });
+
+  useEffect(() => {
+    mutationsRef.current = {
+      playPause: playPauseMutation.mutate,
+      stop: stopMutation.mutate,
+      skipNext: skipNextMutation.mutate,
+      skipPrev: skipPrevMutation.mutate,
+      seek: seekMutation.mutate,
+      setVolume: setVolumeMutation.mutate,
+      toggleMute: toggleMuteMutation.mutate,
+    };
+  });
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isInputFocused()) return;
@@ -40,15 +63,17 @@ export function useKeyboardShortcuts() {
       const { playerId, percentage, volume } = usePlayerStore.getState();
       if (playerId === undefined) return;
 
+      const m = mutationsRef.current;
+
       switch (e.key) {
         case ' ':
           e.preventDefault();
-          playPauseMutation.mutate(playerId);
+          m.playPause(playerId);
           break;
 
         case 'ArrowLeft':
           e.preventDefault();
-          seekMutation.mutate({
+          m.seek({
             playerId,
             value: Math.max(0, percentage - 2),
           });
@@ -56,7 +81,7 @@ export function useKeyboardShortcuts() {
 
         case 'ArrowRight':
           e.preventDefault();
-          seekMutation.mutate({
+          m.seek({
             playerId,
             value: Math.min(100, percentage + 2),
           });
@@ -64,36 +89,36 @@ export function useKeyboardShortcuts() {
 
         case 'ArrowUp':
           e.preventDefault();
-          setVolumeMutation.mutate(Math.min(100, volume + 5));
+          m.setVolume(Math.min(100, volume + 5));
           break;
 
         case 'ArrowDown':
           e.preventDefault();
-          setVolumeMutation.mutate(Math.max(0, volume - 5));
+          m.setVolume(Math.max(0, volume - 5));
           break;
 
         case 'm':
         case 'M':
           e.preventDefault();
-          toggleMuteMutation.mutate();
+          m.toggleMute();
           break;
 
         case 'n':
         case 'N':
           e.preventDefault();
-          skipNextMutation.mutate(playerId);
+          m.skipNext(playerId);
           break;
 
         case 'p':
         case 'P':
           e.preventDefault();
-          skipPrevMutation.mutate(playerId);
+          m.skipPrev(playerId);
           break;
 
         case 's':
         case 'S':
           e.preventDefault();
-          stopMutation.mutate(playerId);
+          m.stop(playerId);
           break;
 
         case 'f':
@@ -108,14 +133,5 @@ export function useKeyboardShortcuts() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [
-    navigate,
-    playPauseMutation,
-    stopMutation,
-    skipNextMutation,
-    skipPrevMutation,
-    seekMutation,
-    setVolumeMutation,
-    toggleMuteMutation,
-  ]);
+  }, [navigate]);
 }

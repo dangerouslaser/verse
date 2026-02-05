@@ -19,33 +19,9 @@ import { Button } from '@/components/ui/button';
 import { SeekBar } from './SeekBar';
 import { VolumeControl } from './VolumeControl';
 import { getImageUrl } from '@/lib/image-utils';
-import { timeToSeconds, formatTime, formatEpisodeNumber } from '@/lib/format';
-import { cn } from '@/lib/utils';
+import { getItemTitle } from '@/lib/player-utils';
+import { timeToSeconds, formatTime } from '@/lib/format';
 import { toast } from 'sonner';
-
-function getItemTitle(item: {
-  type: string;
-  title?: string;
-  label: string;
-  showtitle?: string;
-  season?: number;
-  episode?: number;
-}) {
-  if (item.type === 'episode' && item.showtitle) {
-    const epNum =
-      item.season !== undefined && item.episode !== undefined
-        ? formatEpisodeNumber(item.season, item.episode)
-        : '';
-    return {
-      title: item.title ?? item.label,
-      subtitle: `${item.showtitle}${epNum ? ` - ${epNum}` : ''}`,
-    };
-  }
-  return {
-    title: item.title ?? item.label,
-    subtitle: item.type === 'movie' ? 'Movie' : item.type,
-  };
-}
 
 export function NowPlaying() {
   const { data: players } = useActivePlayers();
@@ -62,34 +38,18 @@ export function NowPlaying() {
   const setVolumeMutation = useSetVolume();
   const toggleMuteMutation = useToggleMute();
 
-  const { setPlayer, setCurrentItem, syncPlaybackState, setVolume } = usePlayerStore();
-
-  // Sync player state to store
+  // Sync query data to the Zustand store (consumed by keyboard shortcuts)
   useEffect(() => {
+    const store = usePlayerStore.getState();
     if (activePlayer) {
-      setPlayer(activePlayer.playerid, activePlayer.type);
+      store.setPlayer(activePlayer.playerid, activePlayer.type);
     } else {
-      setPlayer(undefined);
+      store.setPlayer(undefined);
     }
-  }, [activePlayer, setPlayer]);
-
-  useEffect(() => {
-    if (playerProps) {
-      syncPlaybackState(playerProps);
-    }
-  }, [playerProps, syncPlaybackState]);
-
-  useEffect(() => {
-    if (playerItemData?.item) {
-      setCurrentItem(playerItemData.item);
-    }
-  }, [playerItemData, setCurrentItem]);
-
-  useEffect(() => {
-    if (volumeData) {
-      setVolume(volumeData.volume, volumeData.muted);
-    }
-  }, [volumeData, setVolume]);
+    if (playerProps) store.syncPlaybackState(playerProps);
+    if (playerItemData?.item) store.setCurrentItem(playerItemData.item);
+    if (volumeData) store.setVolume(volumeData.volume, volumeData.muted);
+  }, [activePlayer, playerProps, playerItemData, volumeData]);
 
   if (!activePlayer || !playerProps) {
     return null;
@@ -195,7 +155,7 @@ export function NowPlaying() {
             <Button
               variant="ghost"
               size="icon"
-              className={cn('h-9 w-9')}
+              className="h-9 w-9"
               onClick={handlePlayPause}
               disabled={playPauseMutation.isPending}
             >
