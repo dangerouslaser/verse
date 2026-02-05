@@ -12,6 +12,7 @@ export function MovieMetadata({ movie }: MovieMetadataProps) {
   const runtime = formatRuntime(movie.runtime);
   const premiered = formatDate(movie.premiered);
   const directors = joinArray(movie.director);
+  const writers = joinArray(movie.writer);
   const studios = joinArray(movie.studio);
 
   return (
@@ -78,6 +79,13 @@ export function MovieMetadata({ movie }: MovieMetadataProps) {
           <div>
             <h3 className="text-muted-foreground mb-1 text-sm font-semibold uppercase">Director</h3>
             <p className="text-foreground">{directors}</p>
+          </div>
+        )}
+
+        {writers && (
+          <div>
+            <h3 className="text-muted-foreground mb-1 text-sm font-semibold uppercase">Writer</h3>
+            <p className="text-foreground">{writers}</p>
           </div>
         )}
 

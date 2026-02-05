@@ -1,8 +1,8 @@
 import { useParams, Link } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { Play } from 'lucide-react';
+import { Play, Eye, EyeOff } from 'lucide-react';
 import { useEpisodeDetails } from '@/api/hooks/useEpisodes';
-import { usePlayEpisode } from '@/api/hooks/usePlayback';
+import { usePlayEpisode, useSetEpisodeWatched } from '@/api/hooks/usePlayback';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +19,7 @@ export function EpisodeDetails() {
 
   const { data: episode, isLoading, isError, error } = useEpisodeDetails(episodeIdNum);
   const playMutation = usePlayEpisode();
+  const setWatchedMutation = useSetEpisodeWatched();
   const { setItems } = useBreadcrumbs();
 
   // Set breadcrumbs when episode data is loaded
@@ -162,6 +163,22 @@ export function EpisodeDetails() {
               >
                 <Play className="h-5 w-5" fill="currentColor" />
                 {hasResume ? 'Resume' : 'Play'}
+              </Button>
+
+              <Button
+                variant="outline"
+                size="lg"
+                className="gap-2"
+                onClick={() => {
+                  setWatchedMutation.mutate({
+                    episodeid: episodeIdNum,
+                    playcount: isWatched ? 0 : 1,
+                  });
+                }}
+                disabled={setWatchedMutation.isPending}
+              >
+                {isWatched ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {isWatched ? 'Mark Unwatched' : 'Mark Watched'}
               </Button>
             </div>
 

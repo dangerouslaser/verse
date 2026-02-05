@@ -1,10 +1,10 @@
 import { PlayButton } from '@/components/video/PlayButton';
 import { ResumeButton } from '@/components/video/ResumeButton';
 import { Button } from '@/components/ui/button';
-import { usePlay } from '@/api/hooks/usePlayback';
+import { usePlay, useSetMovieWatched } from '@/api/hooks/usePlayback';
 import type { KodiMovie } from '@/api/types/video';
 import { toast } from 'sonner';
-import { ImageIcon } from 'lucide-react';
+import { ImageIcon, Eye, EyeOff } from 'lucide-react';
 
 interface MovieActionsProps {
   movie: KodiMovie;
@@ -12,6 +12,7 @@ interface MovieActionsProps {
 
 export function MovieActions({ movie }: MovieActionsProps) {
   const playMutation = usePlay();
+  const setWatchedMutation = useSetMovieWatched();
 
   const handlePlay = async (resume: boolean = false) => {
     try {
@@ -31,18 +32,27 @@ export function MovieActions({ movie }: MovieActionsProps) {
   };
 
   const hasResume = movie.resume && movie.resume.position > 0;
+  const isWatched = movie.playcount !== undefined && movie.playcount > 0;
+
+  const handleToggleWatched = () => {
+    setWatchedMutation.mutate({
+      movieid: movie.movieid,
+      playcount: isWatched ? 0 : 1,
+    });
+  };
 
   const handleEditArtwork = () => {
     // TODO: Implement artwork editor dialog with TMDB and Fanart.TV integration
     toast.info('Coming Soon', {
-      description: 'Artwork editor will allow you to fetch and change artwork from TMDB and Fanart.TV',
+      description:
+        'Artwork editor will allow you to fetch and change artwork from TMDB and Fanart.TV',
     });
   };
 
   return (
     <div className="flex flex-wrap gap-3">
       <PlayButton
-        onClick={() => handlePlay(false)}
+        onClick={() => void handlePlay(false)}
         disabled={playMutation.isPending}
         size="lg"
       />
@@ -50,7 +60,7 @@ export function MovieActions({ movie }: MovieActionsProps) {
       {hasResume && movie.resume && (
         <ResumeButton
           resume={movie.resume}
-          onClick={() => handlePlay(true)}
+          onClick={() => void handlePlay(true)}
           disabled={playMutation.isPending}
           size="lg"
         />
@@ -59,9 +69,15 @@ export function MovieActions({ movie }: MovieActionsProps) {
       <Button
         variant="outline"
         size="lg"
-        onClick={handleEditArtwork}
+        onClick={handleToggleWatched}
+        disabled={setWatchedMutation.isPending}
         className="gap-2"
       >
+        {isWatched ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+        {isWatched ? 'Mark Unwatched' : 'Mark Watched'}
+      </Button>
+
+      <Button variant="outline" size="lg" onClick={handleEditArtwork} className="gap-2">
         <ImageIcon className="h-5 w-5" />
         Edit Artwork
       </Button>
