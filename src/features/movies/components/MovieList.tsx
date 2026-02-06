@@ -138,11 +138,13 @@ export function MovieList() {
     <div className="container space-y-4 py-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <p className="text-muted-foreground">
-          {filteredCount !== totalCount
-            ? `${filteredCount.toLocaleString()} of ${totalCount.toLocaleString()} movies`
-            : `${totalCount.toLocaleString()} movies in your library`}
-        </p>
+        <div className="bg-muted/50 rounded-lg px-3 py-1.5">
+          <p className="text-muted-foreground text-sm">
+            {filteredCount !== totalCount
+              ? `${filteredCount.toLocaleString()} of ${totalCount.toLocaleString()} movies`
+              : `${totalCount.toLocaleString()} movies`}
+          </p>
+        </div>
         <ViewToggle value={viewMode} onChange={setViewMode} />
       </div>
 

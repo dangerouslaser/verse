@@ -156,11 +156,13 @@ export function TVShowList() {
     <div className="container space-y-4 py-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <p className="text-muted-foreground">
-          {tvshows.length !== totalCount
-            ? `${tvshows.length.toLocaleString()} of ${totalCount.toLocaleString()} TV shows`
-            : `${totalCount.toLocaleString()} TV shows in your library`}
-        </p>
+        <div className="bg-muted/50 rounded-lg px-3 py-1.5">
+          <p className="text-muted-foreground text-sm">
+            {tvshows.length !== totalCount
+              ? `${tvshows.length.toLocaleString()} of ${totalCount.toLocaleString()} TV shows`
+              : `${totalCount.toLocaleString()} TV shows`}
+          </p>
+        </div>
         <ViewToggle value={viewMode} onChange={setViewMode} />
       </div>
 
