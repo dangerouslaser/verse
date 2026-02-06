@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { usePlayerStore } from '@/stores/player';
+import { useSearchStore } from '@/stores/search';
 import {
   usePlayPause,
   useStop,
@@ -58,6 +59,13 @@ export function useKeyboardShortcuts() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd+K / Ctrl+K for search (works even when input focused)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        useSearchStore.getState().toggle();
+        return;
+      }
+
       if (isInputFocused()) return;
 
       const { playerId, percentage, volume } = usePlayerStore.getState();

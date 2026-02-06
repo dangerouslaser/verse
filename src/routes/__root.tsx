@@ -12,6 +12,8 @@ import { Separator } from '@/components/ui/separator';
 import { ThemeProvider } from '@/components/theme-provider';
 import { NowPlaying } from '@/components/player/NowPlaying';
 import { VerticalScrollFade } from '@/components/ui/vertical-scroll-fade';
+import { GlobalSearch } from '@/components/search/GlobalSearch';
+import { SearchTrigger } from '@/components/search/SearchTrigger';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useKodiWebSocket } from '@/api/hooks/useKodiWebSocket';
 import { cn } from '@/lib/utils';
@@ -52,6 +54,9 @@ function AppShell() {
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <AppBreadcrumbs />
+            <div className="ml-auto">
+              <SearchTrigger />
+            </div>
           </header>
           <VerticalScrollFade onScrollStateChange={handleScrollStateChange}>
             <Outlet />
@@ -59,6 +64,7 @@ function AppShell() {
           <NowPlaying />
         </SidebarInset>
       </SidebarProvider>
+      <GlobalSearch />
     </BreadcrumbProvider>
   );
 }
