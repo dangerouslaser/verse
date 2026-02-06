@@ -58,7 +58,7 @@ export function VerticalScrollFade({
         )}
         style={{
           background:
-            'linear-gradient(to bottom, hsl(var(--color-background)) 0%, hsl(var(--color-background) / 0.5) 50%, transparent 100%)',
+            'linear-gradient(to bottom, var(--color-background) 0%, color-mix(in srgb, var(--color-background) 50%, transparent) 50%, transparent 100%)',
         }}
       />
 
@@ -79,7 +79,7 @@ export function VerticalScrollFade({
         )}
         style={{
           background:
-            'linear-gradient(to top, hsl(var(--color-background)) 0%, hsl(var(--color-background) / 0.5) 50%, transparent 100%)',
+            'linear-gradient(to top, var(--color-background) 0%, color-mix(in srgb, var(--color-background) 50%, transparent) 50%, transparent 100%)',
         }}
       />
     </div>

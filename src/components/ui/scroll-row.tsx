@@ -49,7 +49,7 @@ export function ScrollRow({ children, className }: ScrollRowProps) {
         )}
         style={{
           background:
-            'linear-gradient(to right, hsl(var(--color-background)) 0%, hsl(var(--color-background) / 0.5) 50%, transparent 100%)',
+            'linear-gradient(to right, var(--color-background) 0%, color-mix(in srgb, var(--color-background) 50%, transparent) 50%, transparent 100%)',
         }}
       />
 
@@ -69,7 +69,7 @@ export function ScrollRow({ children, className }: ScrollRowProps) {
         )}
         style={{
           background:
-            'linear-gradient(to left, hsl(var(--color-background)) 0%, hsl(var(--color-background) / 0.5) 50%, transparent 100%)',
+            'linear-gradient(to left, var(--color-background) 0%, color-mix(in srgb, var(--color-background) 50%, transparent) 50%, transparent 100%)',
         }}
       />
     </div>
