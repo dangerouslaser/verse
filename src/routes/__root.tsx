@@ -47,7 +47,7 @@ function AppShell() {
         <SidebarInset>
           <header
             className={cn(
-              'flex h-16 shrink-0 items-center gap-2 border-b px-4 transition-[border-color] duration-300',
+              'flex h-14 shrink-0 items-center gap-2 border-b px-4 transition-[border-color] duration-300',
               isScrolled ? 'border-transparent' : 'border-border'
             )}
           >
