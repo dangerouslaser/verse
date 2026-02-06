@@ -22,10 +22,10 @@ coverage
 # Build outputs
 dist
 dist-ssr
+release
 *.local
 
 # Legacy build files
-legacy/dist/js/build/*
 webinterface.default*.zip
 *.mo
 
