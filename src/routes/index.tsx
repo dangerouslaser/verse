@@ -5,6 +5,8 @@ import { useBreadcrumbs } from '@/components/layout/BreadcrumbContext';
 import { useLibraryStats } from '@/api/hooks/useDashboard';
 import { StatsCard, StatsGrid } from '@/features/dashboard/components/StatsCard';
 import { ContinueWatchingRow } from '@/features/dashboard/components/ContinueWatchingRow';
+import { RecentlyAddedMoviesRow } from '@/features/dashboard/components/RecentlyAddedMoviesRow';
+import { RecentlyAddedEpisodesRow } from '@/features/dashboard/components/RecentlyAddedEpisodesRow';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -35,6 +37,10 @@ function HomePage() {
       </section>
 
       <ContinueWatchingRow />
+
+      <RecentlyAddedMoviesRow />
+
+      <RecentlyAddedEpisodesRow />
     </div>
   );
 }

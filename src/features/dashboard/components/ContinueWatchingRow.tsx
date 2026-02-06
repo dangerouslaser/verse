@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ScrollRow } from '@/components/ui/scroll-row';
 import { MediaPoster } from '@/components/media/MediaPoster';
 import { MediaImage } from '@/components/media/MediaImage';
 import {
@@ -154,34 +155,30 @@ export function ContinueWatchingRow() {
     })
     .slice(0, 12);
 
-  // DEBUG: Duplicate items for scroll testing - repeat 5x
-  const debugItems = Array.from({ length: 6 }, (_, i) =>
-    items.map((item) => ({ ...item, _debugKey: i }))
-  ).flat();
-
   // Don't render if empty and not loading
   if (!isLoading && items.length === 0) {
     return null;
   }
 
   return (
-    <section className="min-w-0">
+    <section>
       <h2 className="mb-4 text-lg font-semibold">Continue Watching</h2>
-      <div className="flex gap-3 overflow-x-auto pb-2">
+      <ScrollRow>
         {isLoading
           ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-          : debugItems.map((item, index) => {
+          : items.map((item) => {
               // Episode thumbnails (16:9) need to be wider to match poster (2:3) height
               // Width ratio: (16/9) / (2/3) = 2.67x wider
               // w-28 = 7rem -> 7 * 2.67 = 18.67rem, w-32 = 8rem -> 8 * 2.67 = 21.33rem
               const widthClass =
                 item.type === 'movie' ? 'w-28 sm:w-32' : 'w-[18.67rem] sm:w-[21.33rem]';
+              const key =
+                item.type === 'movie'
+                  ? `movie-${String(item.item.movieid)}`
+                  : `episode-${String(item.item.episodeid)}`;
 
               return (
-                <div
-                  key={`${item.type}-${String(item.type === 'movie' ? item.item.movieid : item.item.episodeid)}-${String(index)}`}
-                  className={`flex-shrink-0 overflow-hidden ${widthClass}`}
-                >
+                <div key={key} className={`flex-shrink-0 overflow-hidden ${widthClass}`}>
                   {item.type === 'movie' ? (
                     <MovieCard movie={item.item} />
                   ) : (
@@ -190,7 +187,7 @@ export function ContinueWatchingRow() {
                 </div>
               );
             })}
-      </div>
+      </ScrollRow>
     </section>
   );
 }

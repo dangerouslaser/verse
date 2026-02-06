@@ -14,6 +14,65 @@ interface LibraryStats {
   episodes: number;
 }
 
+export function useRecentMovies(limit = 20) {
+  return useQuery({
+    queryKey: ['movies', 'recent', limit],
+    queryFn: async () => {
+      const result = await kodi.call<{ movies?: KodiMovie[] }>('VideoLibrary.GetMovies', {
+        properties: RECENT_MOVIE_PROPS,
+        sort: { method: 'dateadded', order: 'descending' },
+        limits: { start: 0, end: limit },
+      });
+      return result.movies ?? [];
+    },
+  });
+}
+
+export function useRecentEpisodes(limit = 20) {
+  return useQuery({
+    queryKey: ['episodes', 'recent', limit],
+    queryFn: async (): Promise<InProgressEpisode[]> => {
+      const result = await kodi.call<{ episodes?: KodiEpisode[] }>('VideoLibrary.GetEpisodes', {
+        properties: RECENT_EPISODE_PROPS,
+        sort: { method: 'dateadded', order: 'descending' },
+        limits: { start: 0, end: limit },
+      });
+
+      const episodes = result.episodes ?? [];
+      if (episodes.length === 0) return [];
+
+      // Get unique TV show IDs
+      const showIds = [...new Set(episodes.map((ep) => ep.tvshowid).filter(Boolean))] as number[];
+
+      // Fetch TV show art for clearlogos
+      const showArtMap = new Map<number, KodiArt>();
+      if (showIds.length > 0) {
+        await Promise.all(
+          showIds.map(async (tvshowid) => {
+            try {
+              const showResult = await kodi.call<{ tvshowdetails?: KodiTVShow }>(
+                'VideoLibrary.GetTVShowDetails',
+                { tvshowid, properties: ['art'] }
+              );
+              if (showResult.tvshowdetails?.art) {
+                showArtMap.set(tvshowid, showResult.tvshowdetails.art);
+              }
+            } catch {
+              // Ignore errors for individual show fetches
+            }
+          })
+        );
+      }
+
+      // Attach show art to episodes
+      return episodes.map((episode) => ({
+        ...episode,
+        showArt: episode.tvshowid ? showArtMap.get(episode.tvshowid) : undefined,
+      }));
+    },
+  });
+}
+
 export function useLibraryStats() {
   return useQuery({
     queryKey: ['library', 'stats'],
@@ -41,6 +100,17 @@ export function useLibraryStats() {
     },
   });
 }
+
+const RECENT_MOVIE_PROPS = ['title', 'year', 'art'] as const;
+
+const RECENT_EPISODE_PROPS = [
+  'title',
+  'showtitle',
+  'season',
+  'episode',
+  'art',
+  'tvshowid',
+] as const;
 
 const IN_PROGRESS_MOVIE_PROPS = [
   'title',
