@@ -37,7 +37,7 @@ function AppShell() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <AppBreadcrumbs />
           </header>
-          <div className="flex-1 overflow-auto">
+          <div className="min-w-0 flex-1 overflow-auto">
             <Outlet />
           </div>
           <NowPlaying />
