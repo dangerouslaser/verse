@@ -47,8 +47,10 @@ export function MovieList() {
   // Get the total count from Kodi's API response
   const kodiTotal = data?.pages[0]?.total;
 
-  const { filters, setFilters, filteredMovies, genres, filteredCount, totalCount } =
-    useMovieFilters(allMovies, kodiTotal);
+  const { filters, setFilters, filteredMovies, genres, totalCount } = useMovieFilters(
+    allMovies,
+    kodiTotal
+  );
 
   const { setItems } = useBreadcrumbs();
 
@@ -139,11 +141,7 @@ export function MovieList() {
       {/* Header */}
       <div className="flex items-center justify-end gap-2">
         <div className="bg-muted/50 flex h-11 items-center rounded-lg border px-3">
-          <p className="text-muted-foreground text-sm">
-            {filteredCount !== totalCount
-              ? `${filteredCount.toLocaleString()} of ${totalCount.toLocaleString()} movies`
-              : `${totalCount.toLocaleString()} movies`}
-          </p>
+          <p className="text-muted-foreground text-sm">{totalCount.toLocaleString()} movies</p>
         </div>
         <ViewToggle value={viewMode} onChange={setViewMode} className="border" />
       </div>
