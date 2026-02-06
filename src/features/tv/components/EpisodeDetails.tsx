@@ -223,12 +223,7 @@ export function EpisodeDetails() {
             )}
 
             {/* Cast */}
-            {episode.cast && episode.cast.length > 0 && (
-              <div>
-                <h2 className="mb-4 text-xl font-bold">Cast</h2>
-                <MovieCast cast={episode.cast} />
-              </div>
-            )}
+            {episode.cast && episode.cast.length > 0 && <MovieCast cast={episode.cast} />}
           </div>
         </div>
       </div>
