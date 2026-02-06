@@ -1,0 +1,33 @@
+# Docker Compose for Verse Development
+#
+# Usage:
+#   1. Copy .env.example to .env and configure your Kodi connection
+#   2. Run: docker compose up
+#   3. Open: http://localhost:5173
+#
+# The development server supports hot reload - changes to source files
+# will automatically refresh in your browser.
+
+services:
+  verse:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      # Mount source for hot reload (exclude node_modules)
+      - ./src:/app/src:ro
+      - ./public:/app/public:ro
+      - ./index.html:/app/index.html:ro
+      - ./vite.config.ts:/app/vite.config.ts:ro
+      - ./tsconfig.json:/app/tsconfig.json:ro
+      - ./tsconfig.app.json:/app/tsconfig.app.json:ro
+      - ./tailwind.config.js:/app/tailwind.config.js:ro
+      - ./postcss.config.js:/app/postcss.config.js:ro
+      - ./components.json:/app/components.json:ro
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped

@@ -88,6 +88,9 @@ Chorus2 has served Kodi users well, but its technology stack (CoffeeScript, Back
 git clone https://github.com/dangerouslaser/verse.git
 cd verse
 
+# Copy environment config and edit with your Kodi details
+cp .env.example .env
+
 # Install dependencies
 npm install
 
@@ -96,6 +99,25 @@ npm run dev
 
 # Open http://localhost:5173 in your browser
 ```
+
+### Docker Development
+
+If you prefer Docker, you can run the development server in a container:
+
+```bash
+# Clone and configure
+git clone https://github.com/dangerouslaser/verse.git
+cd verse
+cp .env.example .env
+# Edit .env with your Kodi host, username, and password
+
+# Start with Docker Compose
+docker compose up
+
+# Open http://localhost:5173 in your browser
+```
+
+The Docker setup includes hot reload — changes to source files automatically refresh in your browser.
 
 ### Building for Production
 
