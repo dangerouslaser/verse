@@ -2,7 +2,7 @@
 
 > What comes after the Chorus
 
-A modern, fast, and beautiful web interface for Kodi — the successor to Chorus2.
+A modern, fast, and beautiful web interface for Kodi
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](LICENSE)
 
