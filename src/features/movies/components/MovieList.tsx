@@ -149,69 +149,85 @@ export function MovieList() {
         <ViewToggle value={viewMode} onChange={setViewMode} />
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="relative">
-          <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
-          <Input
-            type="search"
-            placeholder="Search movies..."
-            value={searchInput}
-            onChange={(e) => {
-              setSearchInput(e.target.value);
-            }}
-            className="w-64 pl-8"
-          />
-        </div>
-
-        {genres.length > 0 && (
-          <Select
-            value={filters.genre ?? 'all'}
-            onValueChange={(value) => {
-              setFilters({ ...filters, genre: value === 'all' ? undefined : value });
-            }}
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Genre" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Genres</SelectItem>
-              {genres.map((genre) => (
-                <SelectItem key={genre} value={genre}>
-                  {genre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-
-        <Select
-          value={filters.watched === undefined ? 'all' : filters.watched ? 'true' : 'false'}
-          onValueChange={(value) => {
-            setFilters({
-              ...filters,
-              watched: value === 'all' ? undefined : value === 'true',
-            });
-          }}
-        >
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="true">Watched</SelectItem>
-            <SelectItem value="false">Unwatched</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
       {/* Content */}
-      {filteredMovies.length > 0 ? (
+      {filteredMovies.length > 0 ||
+      searchInput ||
+      filters.genre ||
+      filters.watched !== undefined ? (
         <>
           {viewMode === 'list' ? (
             <div className="bg-muted/50 rounded-md border">
               <Table>
                 <TableHeader>
+                  {/* Filters Row */}
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead colSpan={8} className="h-14">
+                      <div className="flex flex-wrap items-center gap-4">
+                        <div className="relative">
+                          <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
+                          <Input
+                            type="search"
+                            placeholder="Search movies..."
+                            value={searchInput}
+                            onChange={(e) => {
+                              setSearchInput(e.target.value);
+                            }}
+                            className="w-64 pl-8"
+                          />
+                        </div>
+
+                        {genres.length > 0 && (
+                          <Select
+                            value={filters.genre ?? 'all'}
+                            onValueChange={(value) => {
+                              setFilters({
+                                ...filters,
+                                genre: value === 'all' ? undefined : value,
+                              });
+                            }}
+                          >
+                            <SelectTrigger className="w-40">
+                              <SelectValue placeholder="Genre" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Genres</SelectItem>
+                              {genres.map((genre) => (
+                                <SelectItem key={genre} value={genre}>
+                                  {genre}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+
+                        <Select
+                          value={
+                            filters.watched === undefined
+                              ? 'all'
+                              : filters.watched
+                                ? 'true'
+                                : 'false'
+                          }
+                          onValueChange={(value) => {
+                            setFilters({
+                              ...filters,
+                              watched: value === 'all' ? undefined : value === 'true',
+                            });
+                          }}
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue placeholder="Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All</SelectItem>
+                            <SelectItem value="true">Watched</SelectItem>
+                            <SelectItem value="false">Unwatched</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                  {/* Column Headers Row */}
                   <TableRow>
                     <TableHead className="w-12"></TableHead>
                     <TableHead>
@@ -337,11 +353,69 @@ export function MovieList() {
               </Table>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8">
-              {filteredMovies.map((movie) => (
-                <MovieCard key={movie.movieid} movie={movie} />
-              ))}
-            </div>
+            <>
+              {/* Filters for grid view */}
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="relative">
+                  <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
+                  <Input
+                    type="search"
+                    placeholder="Search movies..."
+                    value={searchInput}
+                    onChange={(e) => {
+                      setSearchInput(e.target.value);
+                    }}
+                    className="w-64 pl-8"
+                  />
+                </div>
+
+                {genres.length > 0 && (
+                  <Select
+                    value={filters.genre ?? 'all'}
+                    onValueChange={(value) => {
+                      setFilters({ ...filters, genre: value === 'all' ? undefined : value });
+                    }}
+                  >
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Genre" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Genres</SelectItem>
+                      {genres.map((genre) => (
+                        <SelectItem key={genre} value={genre}>
+                          {genre}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                <Select
+                  value={filters.watched === undefined ? 'all' : filters.watched ? 'true' : 'false'}
+                  onValueChange={(value) => {
+                    setFilters({
+                      ...filters,
+                      watched: value === 'all' ? undefined : value === 'true',
+                    });
+                  }}
+                >
+                  <SelectTrigger className="w-32">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="true">Watched</SelectItem>
+                    <SelectItem value="false">Unwatched</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8">
+                {filteredMovies.map((movie) => (
+                  <MovieCard key={movie.movieid} movie={movie} />
+                ))}
+              </div>
+            </>
           )}
 
           {/* Infinite scroll trigger */}

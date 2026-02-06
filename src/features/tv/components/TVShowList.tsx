@@ -167,41 +167,11 @@ export function TVShowList() {
         <ViewToggle value={viewMode} onChange={setViewMode} />
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="relative">
-          <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
-          <Input
-            type="text"
-            placeholder="Search TV shows..."
-            value={searchInput}
-            onChange={(e) => {
-              setSearchInput(e.target.value);
-            }}
-            className="w-64 pl-8"
-          />
-        </div>
-
-        <Select value={selectedGenre} onValueChange={setSelectedGenre}>
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="Genre" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Genres</SelectItem>
-            {genres.map((genre) => (
-              <SelectItem key={genre} value={genre}>
-                {genre}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
       {/* TV Shows Grid/List */}
-      {tvshows.length === 0 ? (
+      {tvshows.length === 0 && !searchInput && selectedGenre === 'all' ? (
         <div className="bg-muted/50 rounded-lg border p-12 text-center">
           <h2 className="mb-2 text-xl font-semibold">No TV shows found</h2>
-          <p className="text-muted-foreground">Try adjusting your search or filter criteria.</p>
+          <p className="text-muted-foreground">Your TV show library is empty.</p>
         </div>
       ) : (
         <>
@@ -209,6 +179,40 @@ export function TVShowList() {
             <div className="bg-muted/50 rounded-md border">
               <Table>
                 <TableHeader>
+                  {/* Filters Row */}
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead colSpan={8} className="h-14">
+                      <div className="flex flex-wrap items-center gap-4">
+                        <div className="relative">
+                          <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
+                          <Input
+                            type="text"
+                            placeholder="Search TV shows..."
+                            value={searchInput}
+                            onChange={(e) => {
+                              setSearchInput(e.target.value);
+                            }}
+                            className="w-64 pl-8"
+                          />
+                        </div>
+
+                        <Select value={selectedGenre} onValueChange={setSelectedGenre}>
+                          <SelectTrigger className="w-40">
+                            <SelectValue placeholder="Genre" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Genres</SelectItem>
+                            {genres.map((genre) => (
+                              <SelectItem key={genre} value={genre}>
+                                {genre}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                  {/* Column Headers Row */}
                   <TableRow>
                     <TableHead className="w-12"></TableHead>
                     <TableHead>
@@ -333,11 +337,43 @@ export function TVShowList() {
               </Table>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8">
-              {tvshows.map((tvshow) => (
-                <TVShowCard key={tvshow.tvshowid} tvshow={tvshow} />
-              ))}
-            </div>
+            <>
+              {/* Filters for grid view */}
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="relative">
+                  <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
+                  <Input
+                    type="text"
+                    placeholder="Search TV shows..."
+                    value={searchInput}
+                    onChange={(e) => {
+                      setSearchInput(e.target.value);
+                    }}
+                    className="w-64 pl-8"
+                  />
+                </div>
+
+                <Select value={selectedGenre} onValueChange={setSelectedGenre}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Genre" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Genres</SelectItem>
+                    {genres.map((genre) => (
+                      <SelectItem key={genre} value={genre}>
+                        {genre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8">
+                {tvshows.map((tvshow) => (
+                  <TVShowCard key={tvshow.tvshowid} tvshow={tvshow} />
+                ))}
+              </div>
+            </>
           )}
 
           {/* Loading indicator */}
