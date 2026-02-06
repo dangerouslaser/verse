@@ -15,6 +15,8 @@ A modern, fast, and beautiful web interface for Kodi — the successor to Chorus
 ### Current Features
 
 - **Movies & TV Shows** — Browse, filter, sort, and play your full video library
+- **Music Library** — Browse artists, albums, and songs with full playback controls
+- **Global Search** — Cmd+K / Ctrl+K command palette to search across all media types
 - **Player Controls** — Persistent footer bar with seek, volume, prev/next, and a dedicated full player page
 - **Real-time Updates** — WebSocket connection to Kodi keeps the UI in sync
 - **Keyboard Shortcuts** — Space, arrows, and letter keys for power users
@@ -24,8 +26,7 @@ A modern, fast, and beautiful web interface for Kodi — the successor to Chorus
 
 ### Planned Features
 
-- Music library browsing
-- Global search across all media types
+- Advanced playlist management with drag-to-reorder
 - Live TV/PVR support
 - Local browser streaming (dual player mode)
 - Progressive Web App (offline, installable)
@@ -187,16 +188,21 @@ Contributions are welcome!
 - WebSocket real-time updates from Kodi
 - Keyboard shortcuts (space, arrows, M/N/P/S/F)
 
-### Phase 3: Music Library — UP NEXT
+### Phase 3: Music Library — COMPLETE
 
-- Artists, albums, and songs browsing
-- Search and filtering
-- Virtual scrolling for large libraries
+- Artists, albums, and songs browsing with infinite scroll
+- Search, genre filtering, and sorting
+- Play and queue controls for Kodi mode
+
+### Phase 5: Global Search — COMPLETE
+
+- Command palette (Cmd+K / Ctrl+K) for instant search
+- Search across movies, TV shows, episodes, artists, albums, and songs
+- Recent search history with localStorage persistence
 
 ### Coming Later
 
 - Playlists & advanced queue management
-- Global search across all media types
 - Settings management
 - Live TV/PVR
 - Add-ons

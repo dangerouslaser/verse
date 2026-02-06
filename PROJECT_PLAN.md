@@ -645,24 +645,36 @@ export class KodiWebSocket {
 
 ---
 
-### Phase 5: Search & Discovery (Weeks 13-14)
+### Phase 5: Search & Discovery — IN PROGRESS
 
 **Goal**: Global search and content discovery
 
 **Tasks**:
 
-1. Global search across all media types
-2. Fuzzy search implementation
-3. Search result UI with type filtering
-4. Search history
-5. Recent items/continue watching
-6. Recommended content
-7. Genre browsing
-8. Tag-based filtering
-9. Advanced filters UI
-10. Search index with caching
+1. ✅ Global search across all media types (movies, TV shows, episodes, artists, albums, songs)
+2. ✅ Command palette UI (Cmd+K / Ctrl+K) with cmdk library
+3. ✅ Debounced search with 300ms delay
+4. ✅ Search results grouped by media type with icons
+5. ✅ Recent search history (localStorage persistence)
+6. ⏳ Fuzzy search implementation
+7. ⏳ Recent items/continue watching
+8. ⏳ Recommended content
+9. ⏳ Genre browsing
+10. ⏳ Tag-based filtering
+11. ⏳ Advanced filters UI
 
-**Deliverable**: Comprehensive search and discovery features
+**Completed Features**:
+
+- Command palette dialog triggered by Cmd+K (Mac) or Ctrl+K (Windows/Linux)
+- Parallel API queries to all 6 media libraries (movies, TV shows, episodes, artists, albums, songs)
+- Results limited to 5 per category for fast response
+- Individual error handling per API call for resilience
+- Search results with thumbnails, titles, subtitles, and type badges
+- Recent searches stored in localStorage via Zustand persist middleware
+- Keyboard navigation and click-to-navigate to detail pages
+- Sidebar-matching background color for visual consistency
+
+**Deliverable**: Global search complete; additional discovery features pending
 
 ---
 
@@ -1109,7 +1121,7 @@ Phases 0-3 are complete. The application has working video and music libraries w
 ### Next Steps
 
 1. **Phase 4: Playlists** — Advanced queue management, drag-to-reorder
-2. **Phase 5: Search** — Global search across all media types
+2. **Phase 5: Search** — ✅ Global search complete; fuzzy search and discovery features pending
 3. **Phase 6: Settings** — Connection settings, UI preferences
 4. Local browser streaming (dual player mode) — stretch goal
 
