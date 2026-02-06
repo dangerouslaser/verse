@@ -206,7 +206,7 @@ export function TVShowList() {
       ) : (
         <>
           {viewMode === 'list' ? (
-            <div className="rounded-md border">
+            <div className="bg-muted/50 rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>

@@ -209,7 +209,7 @@ export function MovieList() {
       {filteredMovies.length > 0 ? (
         <>
           {viewMode === 'list' ? (
-            <div className="rounded-md border">
+            <div className="bg-muted/50 rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
