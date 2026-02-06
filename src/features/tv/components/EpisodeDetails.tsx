@@ -103,9 +103,9 @@ export function EpisodeDetails() {
   return (
     <div className="container space-y-6 py-6">
       {/* Hero Section with Fanart/Thumbnail */}
-      <div className="relative overflow-hidden rounded-lg">
+      <div className="bg-muted relative overflow-hidden rounded-lg">
         {fanartUrl || thumbnailUrl ? (
-          <div className="relative">
+          <>
             <MediaImage
               src={fanartUrl ?? thumbnailUrl}
               alt=""
@@ -115,9 +115,9 @@ export function EpisodeDetails() {
               className="h-64 w-full object-cover"
             />
             <div className="from-background via-background/80 absolute inset-0 bg-gradient-to-t to-transparent" />
-          </div>
+          </>
         ) : (
-          <div className="bg-muted h-32 w-full" />
+          <div className="h-32 w-full" />
         )}
 
         <div className="absolute inset-x-0 bottom-0 p-4 md:p-6">
@@ -176,6 +176,7 @@ export function EpisodeDetails() {
             {/* Play button */}
             <div className="hidden gap-2 md:flex">
               <Button
+                variant="play"
                 onClick={() => {
                   handlePlay(hasResume);
                 }}
@@ -193,6 +194,7 @@ export function EpisodeDetails() {
       {/* Mobile actions */}
       <div className="flex flex-wrap gap-3 md:hidden">
         <Button
+          variant="play"
           onClick={() => {
             handlePlay(hasResume);
           }}

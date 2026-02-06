@@ -136,9 +136,9 @@ export function MovieDetails() {
   return (
     <div className="container space-y-6 py-6">
       {/* Hero Section with Fanart */}
-      <div className="relative overflow-hidden rounded-lg">
+      <div className="bg-muted relative overflow-hidden rounded-lg">
         {fanartUrl ? (
-          <div className="relative">
+          <>
             <MediaImage
               src={fanartUrl}
               alt=""
@@ -148,9 +148,9 @@ export function MovieDetails() {
               className="h-64 w-full object-cover"
             />
             <div className="from-background via-background/80 absolute inset-0 bg-gradient-to-t to-transparent" />
-          </div>
+          </>
         ) : (
-          <div className="bg-muted h-32 w-full" />
+          <div className="h-32 w-full" />
         )}
 
         <div className="absolute inset-x-0 bottom-0 p-6">
