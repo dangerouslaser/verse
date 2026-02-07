@@ -4,6 +4,7 @@ import { useTVShowsInfinite } from '@/api/hooks/useTVShows';
 import { TVShowCard } from './TVShowCard';
 import { ViewToggle } from '@/components/media/ViewToggle';
 import { Skeleton } from '@/components/ui/skeleton';
+import { MediaCardSkeletonGrid, MediaListSkeleton } from '@/components/media/MediaCardSkeleton';
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/hooks/useDebounce';
 import {
@@ -120,15 +121,7 @@ export function TVShowList() {
             <Skeleton className="h-10 w-48" />
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="space-y-2">
-              <Skeleton className="aspect-[2/3] w-full" />
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-3 w-1/2" />
-            </div>
-          ))}
-        </div>
+        {viewMode === 'list' ? <MediaListSkeleton /> : <MediaCardSkeletonGrid count={12} />}
       </div>
     );
   }
@@ -280,10 +273,10 @@ export function TVShowList() {
                             <img
                               src={posterUrl}
                               alt={tvshow.title}
-                              className="h-14 w-10 rounded object-cover"
+                              className="aspect-[2/3] w-10 rounded object-cover"
                             />
                           ) : (
-                            <div className="bg-muted text-muted-foreground flex h-14 w-10 items-center justify-center rounded text-xs">
+                            <div className="bg-muted text-muted-foreground flex aspect-[2/3] w-10 items-center justify-center rounded text-xs">
                               N/A
                             </div>
                           )}

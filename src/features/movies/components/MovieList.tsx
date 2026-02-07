@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { MediaCardSkeletonGrid } from '@/components/media/MediaCardSkeleton';
+import { MediaCardSkeletonGrid, MediaListSkeleton } from '@/components/media/MediaCardSkeleton';
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/hooks/useDebounce';
 import {
@@ -86,7 +86,7 @@ export function MovieList() {
           <div className="bg-muted h-10 w-full max-w-md animate-pulse rounded-lg" />
           <div className="bg-muted h-8 w-48 animate-pulse rounded-lg" />
         </div>
-        <MediaCardSkeletonGrid count={20} />
+        {viewMode === 'list' ? <MediaListSkeleton /> : <MediaCardSkeletonGrid count={20} />}
       </div>
     );
   }
@@ -283,10 +283,10 @@ export function MovieList() {
                             <img
                               src={posterUrl}
                               alt={movie.title}
-                              className="h-14 w-10 rounded object-cover"
+                              className="aspect-[2/3] w-10 rounded object-cover"
                             />
                           ) : (
-                            <div className="bg-muted text-muted-foreground flex h-14 w-10 items-center justify-center rounded text-xs">
+                            <div className="bg-muted text-muted-foreground flex aspect-[2/3] w-10 items-center justify-center rounded text-xs">
                               N/A
                             </div>
                           )}

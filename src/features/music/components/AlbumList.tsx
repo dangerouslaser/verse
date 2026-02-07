@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { MediaCardSkeletonGrid } from '@/components/media/MediaCardSkeleton';
+import { MediaCardSkeletonGrid, MediaListSkeleton } from '@/components/media/MediaCardSkeleton';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -51,7 +51,7 @@ export function AlbumList() {
           <div className="bg-muted h-10 w-full max-w-md animate-pulse rounded-lg" />
           <div className="bg-muted h-8 w-48 animate-pulse rounded-lg" />
         </div>
-        <MediaCardSkeletonGrid count={20} />
+        {viewMode === 'list' ? <MediaListSkeleton /> : <MediaCardSkeletonGrid count={20} />}
       </div>
     );
   }
