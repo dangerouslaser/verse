@@ -43,6 +43,11 @@ npm run build:kodi
 
 # Package release zip for Kodi addon
 npm run release         # runs scripts/release.sh
+
+# Release a new version (automated)
+git tag v0.8.0
+git push origin v0.8.0
+# This triggers: release workflow -> GitHub release -> Kodi repo update
 ```
 
 ## Technology Stack
