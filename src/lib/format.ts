@@ -250,6 +250,24 @@ export function formatDiscTrack(disc?: number, track?: number): string {
 }
 
 /**
+ * Format broadcast time range for PVR/EPG display
+ * @param starttime ISO date string for broadcast start
+ * @param endtime ISO date string for broadcast end
+ * @returns Formatted string like "7:00 PM - 8:00 PM"
+ */
+export function formatBroadcastTime(starttime?: string, endtime?: string): string {
+  if (!starttime || !endtime) return '';
+  try {
+    const start = new Date(starttime);
+    const end = new Date(endtime);
+    const timeFormat: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: '2-digit' };
+    return `${start.toLocaleTimeString([], timeFormat)} - ${end.toLocaleTimeString([], timeFormat)}`;
+  } catch {
+    return '';
+  }
+}
+
+/**
  * Format duration in seconds for songs (alias of formatTime)
  * @param seconds Duration in seconds
  * @returns Formatted string like "3:45" or "1:23:45"

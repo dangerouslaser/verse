@@ -37,8 +37,12 @@ export function usePlay(options?: UseMutationOptions<string, Error, PlayOptions>
 export function useActivePlayers() {
   return useQuery({
     queryKey: ['player', 'active'],
-    queryFn: async () => {
-      const response = await kodi.call<GetActivePlayersResponse[]>('Player.GetActivePlayers');
+    queryFn: async ({ signal }) => {
+      const response = await kodi.call<GetActivePlayersResponse[]>(
+        'Player.GetActivePlayers',
+        undefined,
+        signal
+      );
       return response;
     },
     refetchInterval: 10000,
@@ -54,15 +58,19 @@ export function useActivePlayers() {
 export function usePlayerProperties(playerId: number | undefined) {
   return useQuery({
     queryKey: ['player', 'properties', playerId],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (playerId === undefined) {
         throw new Error('Player ID is required');
       }
 
-      const response = await kodi.call<GetPlayerPropertiesResponse>('Player.GetProperties', {
-        playerid: playerId,
-        properties: PLAYER_PROPERTIES,
-      });
+      const response = await kodi.call<GetPlayerPropertiesResponse>(
+        'Player.GetProperties',
+        {
+          playerid: playerId,
+          properties: PLAYER_PROPERTIES,
+        },
+        signal
+      );
       return response;
     },
     enabled: playerId !== undefined,
@@ -125,28 +133,32 @@ export function useSeek(
 export function usePlayerItem(playerId: number | undefined) {
   return useQuery({
     queryKey: ['player', 'item', playerId],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (playerId === undefined) {
         throw new Error('Player ID is required');
       }
 
-      const response = await kodi.call<GetPlayerItemResponse>('Player.GetItem', {
-        playerid: playerId,
-        properties: [
-          'title',
-          'album',
-          'artist',
-          'season',
-          'episode',
-          'showtitle',
-          'tvshowid',
-          'year',
-          'duration',
-          'file',
-          'thumbnail',
-          'art',
-        ],
-      });
+      const response = await kodi.call<GetPlayerItemResponse>(
+        'Player.GetItem',
+        {
+          playerid: playerId,
+          properties: [
+            'title',
+            'album',
+            'artist',
+            'season',
+            'episode',
+            'showtitle',
+            'tvshowid',
+            'year',
+            'duration',
+            'file',
+            'thumbnail',
+            'art',
+          ],
+        },
+        signal
+      );
       return response;
     },
     enabled: playerId !== undefined,
@@ -271,6 +283,7 @@ export function usePlayEpisode() {
     mutationFn: async (options: PlayEpisodeOptions) => {
       await kodi.call('Player.Open', {
         item: { episodeid: options.episodeid },
+        options: options.resume ? { resume: true } : undefined,
       });
       return options;
     },

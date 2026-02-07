@@ -27,11 +27,11 @@ export function WatchedIndicator({
 
   if (variant === 'icon') {
     return (
-      <div className={cn('rounded-full bg-primary p-1', className)}>
+      <div className={cn('bg-primary rounded-full p-1', className)}>
         {isWatched ? (
-          <Check className="h-3 w-3 text-primary-foreground" />
+          <Check className="text-primary-foreground h-3 w-3" />
         ) : (
-          <Eye className="h-3 w-3 text-primary-foreground" />
+          <Eye className="text-primary-foreground h-3 w-3" />
         )}
       </div>
     );
@@ -41,7 +41,7 @@ export function WatchedIndicator({
     return (
       <div className={cn('space-y-1', className)}>
         <Progress value={percentage} className="h-1" />
-        <p className="text-xs text-muted-foreground">{Math.round(percentage)}% watched</p>
+        <p className="text-muted-foreground text-xs">{Math.round(percentage)}% watched</p>
       </div>
     );
   }

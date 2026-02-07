@@ -99,7 +99,7 @@ export class KodiClient {
         throw new KodiError(data.error.message, data.error.code, data.error.data);
       }
 
-      if (!data.result) {
+      if (data.result === undefined || data.result === null) {
         throw new Error('No result in response');
       }
 

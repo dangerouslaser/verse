@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useTVShowsInfinite } from '@/api/hooks/useTVShows';
 import { TVShowCard } from './TVShowCard';
@@ -28,6 +28,9 @@ import { useBreadcrumbs } from '@/components/layout/BreadcrumbContext';
 import { Search, Loader2, ArrowUpDown, Eye, EyeOff, Tv } from 'lucide-react';
 import { getPosterUrl } from '@/lib/image-utils';
 import { formatRating, formatYear } from '@/lib/format';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import type { KodiSort, KodiFilter } from '@/api/types/common';
 
 export function TVShowList() {
@@ -39,7 +42,6 @@ export function TVShowList() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [viewMode, setViewMode] = useViewMode('tvshows', 'list');
 
-  const observerTarget = useRef<HTMLDivElement>(null);
   const { setItems } = useBreadcrumbs();
 
   // Set breadcrumbs
@@ -72,46 +74,28 @@ export function TVShowList() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTVShowsInfinite({ sort, filter });
 
-  // Infinite scroll observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          void fetchNextPage();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const currentTarget = observerTarget.current;
-    if (currentTarget) {
-      observer.observe(currentTarget);
-    }
-
-    return () => {
-      if (currentTarget) {
-        observer.unobserve(currentTarget);
-      }
-    };
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  const observerTarget = useInfiniteScroll(fetchNextPage, hasNextPage, isFetchingNextPage);
 
   // Extract all TV shows from pages
-  const tvshows = data?.pages.flatMap((page) => page.tvshows) ?? [];
+  const tvshows = useMemo(() => data?.pages.flatMap((page) => page.tvshows) ?? [], [data?.pages]);
 
   // Extract unique genres for filter
-  const allGenres = new Set<string>();
-  tvshows.forEach((show) => {
-    show.genre?.forEach((g) => allGenres.add(g));
-  });
-  const genres = Array.from(allGenres).sort();
+  const genres = useMemo(() => {
+    const allGenres = new Set<string>();
+    tvshows.forEach((show) => {
+      show.genre?.forEach((g) => allGenres.add(g));
+    });
+    return Array.from(allGenres).sort();
+  }, [tvshows]);
 
   // Extract unique tags for filter
-  const allTags = new Set<string>();
-  tvshows.forEach((show) => {
-    show.tag?.forEach((t) => allTags.add(t));
-  });
-  const tags = Array.from(allTags).sort();
+  const tags = useMemo(() => {
+    const allTags = new Set<string>();
+    tvshows.forEach((show) => {
+      show.tag?.forEach((t) => allTags.add(t));
+    });
+    return Array.from(allTags).sort();
+  }, [tvshows]);
 
   // Apply client-side tag filter
   const filteredTVShows =
@@ -152,12 +136,7 @@ export function TVShowList() {
   if (isError) {
     return (
       <div className="container space-y-4 py-6">
-        <div className="border-destructive bg-destructive/10 rounded-lg border p-6">
-          <h2 className="text-destructive mb-2 text-lg font-semibold">Error loading TV shows</h2>
-          <p className="text-muted-foreground text-sm">
-            {error instanceof Error ? error.message : 'Failed to fetch TV shows'}
-          </p>
-        </div>
+        <ErrorState title="Error loading TV shows" error={error} />
       </div>
     );
   }
@@ -179,10 +158,7 @@ export function TVShowList() {
       !searchInput &&
       selectedGenre === 'all' &&
       selectedTag === 'all' ? (
-        <div className="bg-muted/50 rounded-lg border p-12 text-center">
-          <h2 className="mb-2 text-xl font-semibold">No TV shows found</h2>
-          <p className="text-muted-foreground">Your TV show library is empty.</p>
-        </div>
+        <EmptyState title="No TV shows found" description="Your TV show library is empty." />
       ) : (
         <>
           {viewMode === 'list' ? (
@@ -196,7 +172,7 @@ export function TVShowList() {
                         <div className="relative">
                           <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
                           <Input
-                            type="text"
+                            type="search"
                             placeholder="Search TV shows..."
                             value={searchInput}
                             onChange={(e) => {
@@ -369,7 +345,7 @@ export function TVShowList() {
                 <div className="relative">
                   <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
                   <Input
-                    type="text"
+                    type="search"
                     placeholder="Search TV shows..."
                     value={searchInput}
                     onChange={(e) => {

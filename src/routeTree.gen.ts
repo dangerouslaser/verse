@@ -15,13 +15,19 @@ import { Route as SettingsIndexRouteImport } from './routes/settings/index';
 import { Route as PlayerIndexRouteImport } from './routes/player/index';
 import { Route as MusicIndexRouteImport } from './routes/music/index';
 import { Route as MoviesIndexRouteImport } from './routes/movies/index';
+import { Route as LiveTvIndexRouteImport } from './routes/live-tv/index';
 import { Route as TvTvshowIdRouteImport } from './routes/tv/$tvshowId';
 import { Route as SettingsKodiRouteImport } from './routes/settings/kodi';
 import { Route as MusicSongsRouteImport } from './routes/music/songs';
 import { Route as MusicAlbumsRouteImport } from './routes/music/albums';
 import { Route as MusicArtistIdRouteImport } from './routes/music/$artistId';
 import { Route as MoviesMovieIdRouteImport } from './routes/movies/$movieId';
+import { Route as LiveTvTimersRouteImport } from './routes/live-tv/timers';
+import { Route as LiveTvGuideRouteImport } from './routes/live-tv/guide';
+import { Route as LiveTvChannelIdRouteImport } from './routes/live-tv/$channelId';
+import { Route as LiveTvRecordingsIndexRouteImport } from './routes/live-tv/recordings/index';
 import { Route as MusicArtistIdAlbumIdRouteImport } from './routes/music/$artistId/$albumId';
+import { Route as LiveTvRecordingsRecordingIdRouteImport } from './routes/live-tv/recordings/$recordingId';
 import { Route as TvTvshowIdSeasonIndexRouteImport } from './routes/tv/$tvshowId/$season.index';
 import { Route as TvTvshowIdSeasonEpisodeIdRouteImport } from './routes/tv/$tvshowId/$season.$episodeId';
 
@@ -55,6 +61,11 @@ const MoviesIndexRoute = MoviesIndexRouteImport.update({
   path: '/movies/',
   getParentRoute: () => rootRouteImport,
 } as any);
+const LiveTvIndexRoute = LiveTvIndexRouteImport.update({
+  id: '/live-tv/',
+  path: '/live-tv/',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const TvTvshowIdRoute = TvTvshowIdRouteImport.update({
   id: '/tv/$tvshowId',
   path: '/tv/$tvshowId',
@@ -85,10 +96,35 @@ const MoviesMovieIdRoute = MoviesMovieIdRouteImport.update({
   path: '/movies/$movieId',
   getParentRoute: () => rootRouteImport,
 } as any);
+const LiveTvTimersRoute = LiveTvTimersRouteImport.update({
+  id: '/live-tv/timers',
+  path: '/live-tv/timers',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const LiveTvGuideRoute = LiveTvGuideRouteImport.update({
+  id: '/live-tv/guide',
+  path: '/live-tv/guide',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const LiveTvChannelIdRoute = LiveTvChannelIdRouteImport.update({
+  id: '/live-tv/$channelId',
+  path: '/live-tv/$channelId',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const LiveTvRecordingsIndexRoute = LiveTvRecordingsIndexRouteImport.update({
+  id: '/live-tv/recordings/',
+  path: '/live-tv/recordings/',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const MusicArtistIdAlbumIdRoute = MusicArtistIdAlbumIdRouteImport.update({
   id: '/$albumId',
   path: '/$albumId',
   getParentRoute: () => MusicArtistIdRoute,
+} as any);
+const LiveTvRecordingsRecordingIdRoute = LiveTvRecordingsRecordingIdRouteImport.update({
+  id: '/live-tv/recordings/$recordingId',
+  path: '/live-tv/recordings/$recordingId',
+  getParentRoute: () => rootRouteImport,
 } as any);
 const TvTvshowIdSeasonIndexRoute = TvTvshowIdSeasonIndexRouteImport.update({
   id: '/$season/',
@@ -103,53 +139,71 @@ const TvTvshowIdSeasonEpisodeIdRoute = TvTvshowIdSeasonEpisodeIdRouteImport.upda
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
+  '/live-tv/$channelId': typeof LiveTvChannelIdRoute;
+  '/live-tv/guide': typeof LiveTvGuideRoute;
+  '/live-tv/timers': typeof LiveTvTimersRoute;
   '/movies/$movieId': typeof MoviesMovieIdRoute;
   '/music/$artistId': typeof MusicArtistIdRouteWithChildren;
   '/music/albums': typeof MusicAlbumsRoute;
   '/music/songs': typeof MusicSongsRoute;
   '/settings/kodi': typeof SettingsKodiRoute;
   '/tv/$tvshowId': typeof TvTvshowIdRouteWithChildren;
+  '/live-tv/': typeof LiveTvIndexRoute;
   '/movies/': typeof MoviesIndexRoute;
   '/music/': typeof MusicIndexRoute;
   '/player/': typeof PlayerIndexRoute;
   '/settings/': typeof SettingsIndexRoute;
   '/tv/': typeof TvIndexRoute;
+  '/live-tv/recordings/$recordingId': typeof LiveTvRecordingsRecordingIdRoute;
   '/music/$artistId/$albumId': typeof MusicArtistIdAlbumIdRoute;
+  '/live-tv/recordings/': typeof LiveTvRecordingsIndexRoute;
   '/tv/$tvshowId/$season/$episodeId': typeof TvTvshowIdSeasonEpisodeIdRoute;
   '/tv/$tvshowId/$season/': typeof TvTvshowIdSeasonIndexRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
+  '/live-tv/$channelId': typeof LiveTvChannelIdRoute;
+  '/live-tv/guide': typeof LiveTvGuideRoute;
+  '/live-tv/timers': typeof LiveTvTimersRoute;
   '/movies/$movieId': typeof MoviesMovieIdRoute;
   '/music/$artistId': typeof MusicArtistIdRouteWithChildren;
   '/music/albums': typeof MusicAlbumsRoute;
   '/music/songs': typeof MusicSongsRoute;
   '/settings/kodi': typeof SettingsKodiRoute;
   '/tv/$tvshowId': typeof TvTvshowIdRouteWithChildren;
+  '/live-tv': typeof LiveTvIndexRoute;
   '/movies': typeof MoviesIndexRoute;
   '/music': typeof MusicIndexRoute;
   '/player': typeof PlayerIndexRoute;
   '/settings': typeof SettingsIndexRoute;
   '/tv': typeof TvIndexRoute;
+  '/live-tv/recordings/$recordingId': typeof LiveTvRecordingsRecordingIdRoute;
   '/music/$artistId/$albumId': typeof MusicArtistIdAlbumIdRoute;
+  '/live-tv/recordings': typeof LiveTvRecordingsIndexRoute;
   '/tv/$tvshowId/$season/$episodeId': typeof TvTvshowIdSeasonEpisodeIdRoute;
   '/tv/$tvshowId/$season': typeof TvTvshowIdSeasonIndexRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   '/': typeof IndexRoute;
+  '/live-tv/$channelId': typeof LiveTvChannelIdRoute;
+  '/live-tv/guide': typeof LiveTvGuideRoute;
+  '/live-tv/timers': typeof LiveTvTimersRoute;
   '/movies/$movieId': typeof MoviesMovieIdRoute;
   '/music/$artistId': typeof MusicArtistIdRouteWithChildren;
   '/music/albums': typeof MusicAlbumsRoute;
   '/music/songs': typeof MusicSongsRoute;
   '/settings/kodi': typeof SettingsKodiRoute;
   '/tv/$tvshowId': typeof TvTvshowIdRouteWithChildren;
+  '/live-tv/': typeof LiveTvIndexRoute;
   '/movies/': typeof MoviesIndexRoute;
   '/music/': typeof MusicIndexRoute;
   '/player/': typeof PlayerIndexRoute;
   '/settings/': typeof SettingsIndexRoute;
   '/tv/': typeof TvIndexRoute;
+  '/live-tv/recordings/$recordingId': typeof LiveTvRecordingsRecordingIdRoute;
   '/music/$artistId/$albumId': typeof MusicArtistIdAlbumIdRoute;
+  '/live-tv/recordings/': typeof LiveTvRecordingsIndexRoute;
   '/tv/$tvshowId/$season/$episodeId': typeof TvTvshowIdSeasonEpisodeIdRoute;
   '/tv/$tvshowId/$season/': typeof TvTvshowIdSeasonIndexRoute;
 }
@@ -157,69 +211,93 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
     | '/'
+    | '/live-tv/$channelId'
+    | '/live-tv/guide'
+    | '/live-tv/timers'
     | '/movies/$movieId'
     | '/music/$artistId'
     | '/music/albums'
     | '/music/songs'
     | '/settings/kodi'
     | '/tv/$tvshowId'
+    | '/live-tv/'
     | '/movies/'
     | '/music/'
     | '/player/'
     | '/settings/'
     | '/tv/'
+    | '/live-tv/recordings/$recordingId'
     | '/music/$artistId/$albumId'
+    | '/live-tv/recordings/'
     | '/tv/$tvshowId/$season/$episodeId'
     | '/tv/$tvshowId/$season/';
   fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
+    | '/live-tv/$channelId'
+    | '/live-tv/guide'
+    | '/live-tv/timers'
     | '/movies/$movieId'
     | '/music/$artistId'
     | '/music/albums'
     | '/music/songs'
     | '/settings/kodi'
     | '/tv/$tvshowId'
+    | '/live-tv'
     | '/movies'
     | '/music'
     | '/player'
     | '/settings'
     | '/tv'
+    | '/live-tv/recordings/$recordingId'
     | '/music/$artistId/$albumId'
+    | '/live-tv/recordings'
     | '/tv/$tvshowId/$season/$episodeId'
     | '/tv/$tvshowId/$season';
   id:
     | '__root__'
     | '/'
+    | '/live-tv/$channelId'
+    | '/live-tv/guide'
+    | '/live-tv/timers'
     | '/movies/$movieId'
     | '/music/$artistId'
     | '/music/albums'
     | '/music/songs'
     | '/settings/kodi'
     | '/tv/$tvshowId'
+    | '/live-tv/'
     | '/movies/'
     | '/music/'
     | '/player/'
     | '/settings/'
     | '/tv/'
+    | '/live-tv/recordings/$recordingId'
     | '/music/$artistId/$albumId'
+    | '/live-tv/recordings/'
     | '/tv/$tvshowId/$season/$episodeId'
     | '/tv/$tvshowId/$season/';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
+  LiveTvChannelIdRoute: typeof LiveTvChannelIdRoute;
+  LiveTvGuideRoute: typeof LiveTvGuideRoute;
+  LiveTvTimersRoute: typeof LiveTvTimersRoute;
   MoviesMovieIdRoute: typeof MoviesMovieIdRoute;
   MusicArtistIdRoute: typeof MusicArtistIdRouteWithChildren;
   MusicAlbumsRoute: typeof MusicAlbumsRoute;
   MusicSongsRoute: typeof MusicSongsRoute;
   SettingsKodiRoute: typeof SettingsKodiRoute;
   TvTvshowIdRoute: typeof TvTvshowIdRouteWithChildren;
+  LiveTvIndexRoute: typeof LiveTvIndexRoute;
   MoviesIndexRoute: typeof MoviesIndexRoute;
   MusicIndexRoute: typeof MusicIndexRoute;
   PlayerIndexRoute: typeof PlayerIndexRoute;
   SettingsIndexRoute: typeof SettingsIndexRoute;
   TvIndexRoute: typeof TvIndexRoute;
+  LiveTvRecordingsRecordingIdRoute: typeof LiveTvRecordingsRecordingIdRoute;
+  LiveTvRecordingsIndexRoute: typeof LiveTvRecordingsIndexRoute;
 }
 
 declare module '@tanstack/react-router' {
@@ -266,6 +344,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MoviesIndexRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/live-tv/': {
+      id: '/live-tv/';
+      path: '/live-tv';
+      fullPath: '/live-tv/';
+      preLoaderRoute: typeof LiveTvIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/tv/$tvshowId': {
       id: '/tv/$tvshowId';
       path: '/tv/$tvshowId';
@@ -308,12 +393,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MoviesMovieIdRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/live-tv/timers': {
+      id: '/live-tv/timers';
+      path: '/live-tv/timers';
+      fullPath: '/live-tv/timers';
+      preLoaderRoute: typeof LiveTvTimersRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/live-tv/guide': {
+      id: '/live-tv/guide';
+      path: '/live-tv/guide';
+      fullPath: '/live-tv/guide';
+      preLoaderRoute: typeof LiveTvGuideRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/live-tv/$channelId': {
+      id: '/live-tv/$channelId';
+      path: '/live-tv/$channelId';
+      fullPath: '/live-tv/$channelId';
+      preLoaderRoute: typeof LiveTvChannelIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/live-tv/recordings/': {
+      id: '/live-tv/recordings/';
+      path: '/live-tv/recordings';
+      fullPath: '/live-tv/recordings/';
+      preLoaderRoute: typeof LiveTvRecordingsIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/music/$artistId/$albumId': {
       id: '/music/$artistId/$albumId';
       path: '/$albumId';
       fullPath: '/music/$artistId/$albumId';
       preLoaderRoute: typeof MusicArtistIdAlbumIdRouteImport;
       parentRoute: typeof MusicArtistIdRoute;
+    };
+    '/live-tv/recordings/$recordingId': {
+      id: '/live-tv/recordings/$recordingId';
+      path: '/live-tv/recordings/$recordingId';
+      fullPath: '/live-tv/recordings/$recordingId';
+      preLoaderRoute: typeof LiveTvRecordingsRecordingIdRouteImport;
+      parentRoute: typeof rootRouteImport;
     };
     '/tv/$tvshowId/$season/': {
       id: '/tv/$tvshowId/$season/';
@@ -358,17 +478,23 @@ const TvTvshowIdRouteWithChildren = TvTvshowIdRoute._addFileChildren(TvTvshowIdR
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LiveTvChannelIdRoute: LiveTvChannelIdRoute,
+  LiveTvGuideRoute: LiveTvGuideRoute,
+  LiveTvTimersRoute: LiveTvTimersRoute,
   MoviesMovieIdRoute: MoviesMovieIdRoute,
   MusicArtistIdRoute: MusicArtistIdRouteWithChildren,
   MusicAlbumsRoute: MusicAlbumsRoute,
   MusicSongsRoute: MusicSongsRoute,
   SettingsKodiRoute: SettingsKodiRoute,
   TvTvshowIdRoute: TvTvshowIdRouteWithChildren,
+  LiveTvIndexRoute: LiveTvIndexRoute,
   MoviesIndexRoute: MoviesIndexRoute,
   MusicIndexRoute: MusicIndexRoute,
   PlayerIndexRoute: PlayerIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   TvIndexRoute: TvIndexRoute,
+  LiveTvRecordingsRecordingIdRoute: LiveTvRecordingsRecordingIdRoute,
+  LiveTvRecordingsIndexRoute: LiveTvRecordingsIndexRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

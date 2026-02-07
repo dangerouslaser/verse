@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { expect, afterEach, beforeAll, afterAll } from 'vitest';
+import { afterEach, beforeAll, afterAll } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { server } from './mocks/server';
 
@@ -18,6 +18,3 @@ afterEach(() => {
 afterAll(() => {
   server.close();
 });
-
-// Custom matchers
-expect.extend({});

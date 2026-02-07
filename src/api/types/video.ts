@@ -152,7 +152,7 @@ export interface GetMovieDetailsResponse {
  * Response from VideoLibrary.GetTVShows
  */
 export interface GetTVShowsResponse {
-  tvshows: KodiTVShow[];
+  tvshows?: KodiTVShow[];
   limits: {
     start: number;
     end: number;
@@ -171,7 +171,7 @@ export interface GetTVShowDetailsResponse {
  * Response from VideoLibrary.GetSeasons
  */
 export interface GetSeasonsResponse {
-  seasons: KodiSeason[];
+  seasons?: KodiSeason[];
   limits: {
     start: number;
     end: number;
@@ -183,7 +183,7 @@ export interface GetSeasonsResponse {
  * Response from VideoLibrary.GetEpisodes
  */
 export interface GetEpisodesResponse {
-  episodes: KodiEpisode[];
+  episodes?: KodiEpisode[];
   limits: {
     start: number;
     end: number;

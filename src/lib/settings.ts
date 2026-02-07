@@ -61,7 +61,7 @@ export function getTmdbApiKey(): string | null {
     return localKey;
   }
   // Fall back to environment variable
-  const envKey = import.meta.env.VITE_TMDB_API_KEY as string | undefined;
+  const envKey = import.meta.env.VITE_TMDB_API_KEY;
   return envKey ?? null;
 }
 

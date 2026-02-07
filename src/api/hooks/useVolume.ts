@@ -7,10 +7,11 @@ import { kodi } from '@/api/client';
 export function useVolume() {
   return useQuery({
     queryKey: ['application', 'volume'],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       const response = await kodi.call<{ volume: number; muted: boolean }>(
         'Application.GetProperties',
-        { properties: ['volume', 'muted'] }
+        { properties: ['volume', 'muted'] },
+        signal
       );
       return response;
     },

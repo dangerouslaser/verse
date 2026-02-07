@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { kodi } from '../client';
+import { kodi } from '@/api/client';
 
 /**
  * Hook to check Kodi connection status
@@ -7,7 +7,7 @@ import { kodi } from '../client';
 export function useKodiConnection() {
   return useQuery({
     queryKey: ['kodi', 'connection'],
-    queryFn: async () => {
+    queryFn: async ({ signal: _signal }) => {
       const result = await kodi.ping();
       return result === 'pong';
     },
@@ -22,7 +22,7 @@ export function useKodiConnection() {
 export function useKodiVersion() {
   return useQuery({
     queryKey: ['kodi', 'version'],
-    queryFn: () => kodi.getVersion(),
+    queryFn: ({ signal: _signal }) => kodi.getVersion(),
     staleTime: Infinity, // Version doesn't change
   });
 }

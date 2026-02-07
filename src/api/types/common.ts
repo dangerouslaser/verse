@@ -97,18 +97,6 @@ export interface KodiMediaBase {
 }
 
 /**
- * List response wrapper from Kodi
- */
-export interface KodiListResponse<T> {
-  limits: {
-    start: number;
-    end: number;
-    total: number;
-  };
-  [key: string]: T[] | { start: number; end: number; total: number } | undefined;
-}
-
-/**
  * Sort options for Kodi queries
  */
 export interface KodiSort {

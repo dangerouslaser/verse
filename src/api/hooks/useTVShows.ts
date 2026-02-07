@@ -30,7 +30,7 @@ export function useTVShowsInfinite(options: UseTVShowsInfiniteOptions = {}) {
         signal
       );
       return {
-        tvshows: response.tvshows,
+        tvshows: response.tvshows ?? [],
         nextCursor: response.limits.total > pageParam + pageSize ? pageParam + pageSize : undefined,
         total: response.limits.total,
       };

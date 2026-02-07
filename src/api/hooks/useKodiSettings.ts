@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { kodi } from '../client';
+import { kodi } from '@/api/client';
 import type {
   SettingLevel,
   KodiSettingSection,
@@ -8,7 +8,7 @@ import type {
   GetSectionsResponse,
   GetCategoriesResponse,
   GetSettingsResponse,
-} from '../types/settings';
+} from '@/api/types/settings';
 
 /** Query keys for settings */
 export const settingsKeys = {
@@ -26,10 +26,12 @@ export const settingsKeys = {
 export function useKodiSettingSections(level: SettingLevel = 'standard') {
   return useQuery({
     queryKey: settingsKeys.sections(level),
-    queryFn: async (): Promise<KodiSettingSection[]> => {
-      const response = await kodi.call<GetSectionsResponse>('Settings.GetSections', {
-        level,
-      });
+    queryFn: async ({ signal }): Promise<KodiSettingSection[]> => {
+      const response = await kodi.call<GetSectionsResponse>(
+        'Settings.GetSections',
+        { level },
+        signal
+      );
       return response.sections;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes - sections rarely change
@@ -40,11 +42,12 @@ export function useKodiSettingSections(level: SettingLevel = 'standard') {
 export function useKodiSettingCategories(section: string, level: SettingLevel = 'standard') {
   return useQuery({
     queryKey: settingsKeys.categories(level, section),
-    queryFn: async (): Promise<KodiSettingCategory[]> => {
-      const response = await kodi.call<GetCategoriesResponse>('Settings.GetCategories', {
-        level,
-        section,
-      });
+    queryFn: async ({ signal }): Promise<KodiSettingCategory[]> => {
+      const response = await kodi.call<GetCategoriesResponse>(
+        'Settings.GetCategories',
+        { level, section },
+        signal
+      );
       return response.categories;
     },
     enabled: !!section,
@@ -56,10 +59,12 @@ export function useKodiSettingCategories(section: string, level: SettingLevel = 
 export function useKodiSettings(level: SettingLevel = 'standard') {
   return useQuery({
     queryKey: settingsKeys.settings(level),
-    queryFn: async (): Promise<KodiSetting[]> => {
-      const response = await kodi.call<GetSettingsResponse>('Settings.GetSettings', {
-        level,
-      });
+    queryFn: async ({ signal }): Promise<KodiSetting[]> => {
+      const response = await kodi.call<GetSettingsResponse>(
+        'Settings.GetSettings',
+        { level },
+        signal
+      );
       return response.settings;
     },
     staleTime: 1000 * 60, // 1 minute - settings may change
@@ -74,11 +79,12 @@ export function useKodiSettingsByCategory(
 ) {
   return useQuery({
     queryKey: settingsKeys.settingsByCategory(level, section, category),
-    queryFn: async (): Promise<KodiSetting[]> => {
-      const response = await kodi.call<GetSettingsResponse>('Settings.GetSettings', {
-        level,
-        filter: { section, category },
-      });
+    queryFn: async ({ signal }): Promise<KodiSetting[]> => {
+      const response = await kodi.call<GetSettingsResponse>(
+        'Settings.GetSettings',
+        { level, filter: { section, category } },
+        signal
+      );
       return response.settings;
     },
     enabled: !!section && !!category,
@@ -185,12 +191,13 @@ interface GetAddonsResponse {
 export function useKodiAddons(addonType: string | undefined) {
   return useQuery({
     queryKey: ['addons', addonType],
-    queryFn: async (): Promise<KodiAddon[]> => {
+    queryFn: async ({ signal }): Promise<KodiAddon[]> => {
       if (!addonType) return [];
-      const response = await kodi.call<GetAddonsResponse>('Addons.GetAddons', {
-        type: addonType,
-        properties: ['name'],
-      });
+      const response = await kodi.call<GetAddonsResponse>(
+        'Addons.GetAddons',
+        { type: addonType, properties: ['name'] },
+        signal
+      );
       return response.addons ?? [];
     },
     enabled: !!addonType,

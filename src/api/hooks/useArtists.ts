@@ -30,7 +30,7 @@ export function useArtistsInfinite(options: UseArtistsInfiniteOptions = {}) {
         signal
       );
       return {
-        artists: response.artists,
+        artists: response.artists ?? [],
         nextCursor: response.limits.total > pageParam + pageSize ? pageParam + pageSize : undefined,
         total: response.limits.total,
       };

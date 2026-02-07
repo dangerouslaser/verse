@@ -30,7 +30,7 @@ export function useSongsInfinite(options: UseSongsInfiniteOptions = {}) {
         signal
       );
       return {
-        songs: response.songs,
+        songs: response.songs ?? [],
         nextCursor: response.limits.total > pageParam + pageSize ? pageParam + pageSize : undefined,
         total: response.limits.total,
       };
@@ -49,17 +49,24 @@ export function useSongsInfinite(options: UseSongsInfiniteOptions = {}) {
 export function useSongsByAlbum(albumId: number | undefined) {
   return useQuery({
     queryKey: ['songs', { albumId }],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!albumId) throw new Error('Album ID is required');
 
-      const response = await kodi.call<GetSongsResponse>('AudioLibrary.GetSongs', {
-        filter: { albumid: albumId },
-        properties: SONG_LIST_PROPERTIES,
-        sort: { method: 'track', order: 'ascending' },
-      });
+      const response = await kodi.call<GetSongsResponse>(
+        'AudioLibrary.GetSongs',
+        {
+          filter: { albumid: albumId },
+          properties: SONG_LIST_PROPERTIES,
+          sort: { method: 'track', order: 'ascending' },
+        },
+        signal
+      );
 
-      return response.songs;
+      return response.songs ?? [];
     },
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
     enabled: !!albumId,
   });
 }
@@ -70,16 +77,23 @@ export function useSongsByAlbum(albumId: number | undefined) {
 export function useSongsByArtist(artistId: number | undefined) {
   return useQuery({
     queryKey: ['songs', { artistId }],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!artistId) throw new Error('Artist ID is required');
 
-      const response = await kodi.call<GetSongsResponse>('AudioLibrary.GetSongs', {
-        filter: { artistid: artistId },
-        properties: SONG_LIST_PROPERTIES,
-      });
+      const response = await kodi.call<GetSongsResponse>(
+        'AudioLibrary.GetSongs',
+        {
+          filter: { artistid: artistId },
+          properties: SONG_LIST_PROPERTIES,
+        },
+        signal
+      );
 
-      return response.songs;
+      return response.songs ?? [];
     },
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
     enabled: !!artistId,
   });
 }

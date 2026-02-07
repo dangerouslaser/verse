@@ -18,7 +18,7 @@ export function useSeasons(tvshowId: number) {
         },
         signal
       );
-      return response.seasons;
+      return response.seasons ?? [];
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,

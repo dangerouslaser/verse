@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { MediaCardSkeletonGrid } from '@/components/media/MediaCardSkeleton';
 import { Input } from '@/components/ui/input';
@@ -30,12 +30,15 @@ import { usePlayMovie } from '@/api/hooks/usePlayer';
 import { Search, Loader2, Eye, EyeOff, Play, ArrowUpDown } from 'lucide-react';
 import { getPosterUrl } from '@/lib/image-utils';
 import { formatRuntime, formatRating, formatYear } from '@/lib/format';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
 export function MovieList() {
   const { data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useMoviesInfinite();
 
-  const observerTarget = useRef<HTMLDivElement>(null);
+  const observerTarget = useInfiniteScroll(fetchNextPage, hasNextPage, isFetchingNextPage);
   const [viewMode, setViewMode] = useViewMode('movies', 'list');
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearch = useDebounce(searchInput, 300);
@@ -64,30 +67,6 @@ export function MovieList() {
     setFilters((prev) => ({ ...prev, search: debouncedSearch }));
   }, [debouncedSearch, setFilters]);
 
-  // Infinite scroll observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          void fetchNextPage();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const target = observerTarget.current;
-    if (target) {
-      observer.observe(target);
-    }
-
-    return () => {
-      if (target) {
-        observer.unobserve(target);
-      }
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
   const handleSort = (field: 'title' | 'year' | 'rating' | 'dateadded') => {
     if (filters.sortBy === field) {
       setFilters({ ...filters, sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc' });
@@ -115,12 +94,7 @@ export function MovieList() {
   if (isError) {
     return (
       <div className="container space-y-4 py-6">
-        <div className="border-destructive bg-destructive/10 rounded-lg border p-6">
-          <h2 className="text-destructive mb-2 text-lg font-semibold">Error loading movies</h2>
-          <p className="text-muted-foreground text-sm">
-            {error instanceof Error ? error.message : 'An unknown error occurred'}
-          </p>
-        </div>
+        <ErrorState title="Error loading movies" error={error} />
       </div>
     );
   }
@@ -128,10 +102,7 @@ export function MovieList() {
   if (allMovies.length === 0) {
     return (
       <div className="container space-y-4 py-6">
-        <div className="bg-muted/50 rounded-lg border p-12 text-center">
-          <h2 className="mb-2 text-xl font-semibold">No movies found</h2>
-          <p className="text-muted-foreground">Your movie library is empty.</p>
-        </div>
+        <EmptyState title="No movies found" description="Your movie library is empty." />
       </div>
     );
   }
@@ -471,10 +442,10 @@ export function MovieList() {
           </div>
         </>
       ) : (
-        <div className="bg-muted/50 rounded-lg border p-12 text-center">
-          <h2 className="mb-2 text-xl font-semibold">No results found</h2>
-          <p className="text-muted-foreground">Try adjusting your search or filter criteria.</p>
-        </div>
+        <EmptyState
+          title="No results found"
+          description="Try adjusting your search or filter criteria."
+        />
       )}
     </div>
   );

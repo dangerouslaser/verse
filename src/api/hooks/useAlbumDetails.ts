@@ -12,20 +12,26 @@ export function useAlbumDetails(
 ) {
   return useQuery({
     queryKey: ['album', albumId],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!albumId) {
         throw new Error('Album ID is required');
       }
 
-      const response = await kodi.call<GetAlbumDetailsResponse>('AudioLibrary.GetAlbumDetails', {
-        albumid: albumId,
-        properties: ALBUM_PROPERTIES,
-      });
+      const response = await kodi.call<GetAlbumDetailsResponse>(
+        'AudioLibrary.GetAlbumDetails',
+        {
+          albumid: albumId,
+          properties: ALBUM_PROPERTIES,
+        },
+        signal
+      );
 
       return response.albumdetails;
     },
     enabled: albumId !== undefined,
-    staleTime: 15 * 60 * 1000, // 15 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
     ...queryOptions,
   });
 }

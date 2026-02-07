@@ -207,7 +207,7 @@ export function useGlobalSearch(query: string, options: UseGlobalSearchOptions =
 
   return useQuery({
     queryKey: ['search', 'global', debouncedQuery],
-    queryFn: () => searchAllLibraries(debouncedQuery),
+    queryFn: ({ signal: _signal }) => searchAllLibraries(debouncedQuery),
     enabled: isQueryValid,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes

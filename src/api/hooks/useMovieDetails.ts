@@ -12,20 +12,26 @@ export function useMovieDetails(
 ) {
   return useQuery({
     queryKey: ['movie', movieId],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!movieId) {
         throw new Error('Movie ID is required');
       }
 
-      const response = await kodi.call<GetMovieDetailsResponse>('VideoLibrary.GetMovieDetails', {
-        movieid: movieId,
-        properties: MOVIE_PROPERTIES,
-      });
+      const response = await kodi.call<GetMovieDetailsResponse>(
+        'VideoLibrary.GetMovieDetails',
+        {
+          movieid: movieId,
+          properties: MOVIE_PROPERTIES,
+        },
+        signal
+      );
 
       return response.moviedetails;
     },
     enabled: movieId !== undefined,
-    staleTime: 15 * 60 * 1000, // 15 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
     ...queryOptions,
   });
 }

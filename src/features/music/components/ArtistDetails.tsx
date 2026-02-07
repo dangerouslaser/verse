@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useArtistDetails } from '@/api/hooks/useArtistDetails';
 import { useAlbumsByArtist } from '@/api/hooks/useAlbums';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorState } from '@/components/ui/ErrorState';
 import { MediaImage } from '@/components/media/MediaImage';
 import { ArtistActions } from './ArtistActions';
 import { ArtistMetadata } from './ArtistMetadata';
@@ -39,7 +40,7 @@ export function ArtistDetails() {
         <div className="relative h-[50vh] w-full">
           <Skeleton className="h-full w-full" />
         </div>
-        <div className="container mx-auto px-4 py-8">
+        <div className="container space-y-4 py-6">
           <div className="space-y-4">
             <Skeleton className="h-10 w-3/4" />
             <Skeleton className="h-6 w-1/2" />
@@ -52,13 +53,12 @@ export function ArtistDetails() {
 
   if (isError || !artist) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="border-destructive bg-destructive/10 rounded-lg border p-6">
-          <h2 className="text-destructive mb-2 text-lg font-semibold">Error loading artist</h2>
-          <p className="text-muted-foreground text-sm">
-            {error instanceof Error ? error.message : 'Artist not found'}
-          </p>
-        </div>
+      <div className="container space-y-4 py-6">
+        <ErrorState
+          title="Error loading artist"
+          error={error ?? undefined}
+          message="Artist not found"
+        />
       </div>
     );
   }
@@ -95,7 +95,7 @@ export function ArtistDetails() {
       )}
 
       {/* Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container space-y-4 py-6">
         <div className="space-y-6">
           {/* Artist name */}
           <div>

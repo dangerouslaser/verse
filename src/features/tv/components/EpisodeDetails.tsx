@@ -12,6 +12,8 @@ import { MediaImage } from '@/components/media/MediaImage';
 import { useBreadcrumbs } from '@/components/layout/BreadcrumbContext';
 import { getThumbnailUrl, getFanartUrl, getImageUrl } from '@/lib/image-utils';
 import { formatRuntime } from '@/lib/format';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { CastGrid } from '@/components/media/CastGrid';
 
 export function EpisodeDetails() {
   const { tvshowId, season, episodeId } = useParams({ strict: false });
@@ -62,12 +64,12 @@ export function EpisodeDetails() {
   if (isError || !episode) {
     return (
       <div className="container py-6">
-        <div className="border-destructive bg-destructive/10 rounded-lg border p-6 text-center">
-          <h2 className="text-destructive mb-2 text-lg font-semibold">Error loading episode</h2>
-          <p className="text-muted-foreground text-sm">
-            {error instanceof Error ? error.message : 'Episode not found'}
-          </p>
-        </div>
+        <ErrorState
+          title="Error loading episode"
+          error={error ?? undefined}
+          message="Episode not found"
+          centered
+        />
       </div>
     );
   }
@@ -322,43 +324,7 @@ export function EpisodeDetails() {
               <CardTitle>Cast</CardTitle>
             </CardHeader>
             <CardContent>
-              {episode.cast && episode.cast.length > 0 ? (
-                <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-                  {episode.cast.map((member, idx) => {
-                    const castThumbnailUrl = member.thumbnail
-                      ? getImageUrl(member.thumbnail)
-                      : null;
-                    return (
-                      <div
-                        key={`${member.name}-${String(idx)}`}
-                        className="bg-muted/50 flex items-center gap-3 rounded-md p-2"
-                      >
-                        {castThumbnailUrl ? (
-                          <img
-                            src={castThumbnailUrl}
-                            alt={member.name}
-                            className="h-10 w-10 rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium">
-                            {member.name.charAt(0)}
-                          </div>
-                        )}
-                        <div className="min-w-0">
-                          <p className="truncate font-medium">{member.name}</p>
-                          {member.role && (
-                            <p className="text-muted-foreground truncate text-sm">{member.role}</p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="text-muted-foreground py-8 text-center">
-                  No cast information available
-                </p>
-              )}
+              <CastGrid cast={episode.cast ?? []} />
             </CardContent>
           </Card>
         </TabsContent>

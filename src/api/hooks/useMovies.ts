@@ -49,10 +49,14 @@ export function useMovies(
 export function useMovieCount() {
   return useQuery({
     queryKey: ['movies', 'count'],
-    queryFn: async () => {
-      const response = await kodi.call<GetMoviesResponse>('VideoLibrary.GetMovies', {
-        limits: { start: 0, end: 1 },
-      });
+    queryFn: async ({ signal }) => {
+      const response = await kodi.call<GetMoviesResponse>(
+        'VideoLibrary.GetMovies',
+        {
+          limits: { start: 0, end: 1 },
+        },
+        signal
+      );
       return response.limits.total;
     },
     staleTime: 10 * 60 * 1000,

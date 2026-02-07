@@ -13,11 +13,6 @@ export default defineConfig(({ mode }) => {
   const kodiUsername = env.VITE_KODI_USERNAME;
   const kodiPassword = env.VITE_KODI_PASSWORD;
 
-  console.log('Vite config - kodiHost:', kodiHost);
-  console.log('Vite config - kodiPath:', kodiPath);
-  console.log('Vite config - kodiUsername:', kodiUsername);
-  console.log('Vite config - kodiPassword:', kodiPassword ? '***' : undefined);
-
   // Build basic auth header if credentials are provided
   const headers: Record<string, string> = {
     // Disable compression - Kodi may send compressed responses that cause issues
@@ -26,9 +21,6 @@ export default defineConfig(({ mode }) => {
   if (kodiUsername && kodiPassword) {
     const auth = Buffer.from(`${kodiUsername}:${kodiPassword}`).toString('base64');
     headers['Authorization'] = `Basic ${auth}`;
-    console.log('Vite config - Authorization header:', headers['Authorization']);
-  } else {
-    console.log('Vite config - No auth credentials provided');
   }
 
   return {
@@ -57,18 +49,9 @@ export default defineConfig(({ mode }) => {
           timeout: 60000, // 60 second timeout for large responses
           proxyTimeout: 60000,
           headers,
-          configure: (proxy, _options) => {
-            proxy.on('error', (err, req, _res) => {
-              console.error('Proxy error:', err);
-              console.error('Request:', req.method, req.url);
-            });
-            proxy.on('proxyReq', (proxyReq, req, _res) => {
-              console.log('Sending Request to the Target:', req.method, req.url);
-              console.log('Proxy request headers:', proxyReq.getHeaders());
-            });
-            proxy.on('proxyRes', (proxyRes, req, _res) => {
-              console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
-              console.log('Response headers:', proxyRes.headers);
+          configure: (proxy) => {
+            proxy.on('error', (err, req) => {
+              console.error('Proxy error:', err.message, req.method, req.url);
             });
           },
         },

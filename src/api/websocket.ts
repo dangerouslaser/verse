@@ -123,7 +123,7 @@ export class KodiWebSocket {
 }
 
 function getWebSocketUrl(): string {
-  const wsPort = (import.meta.env.VITE_KODI_WS_PORT as string | undefined) ?? '9090';
+  const wsPort = import.meta.env.VITE_KODI_WS_PORT ?? '9090';
 
   if (import.meta.env.DEV) {
     const kodiHost =

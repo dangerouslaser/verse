@@ -12,20 +12,26 @@ export function useArtistDetails(
 ) {
   return useQuery({
     queryKey: ['artist', artistId],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!artistId) {
         throw new Error('Artist ID is required');
       }
 
-      const response = await kodi.call<GetArtistDetailsResponse>('AudioLibrary.GetArtistDetails', {
-        artistid: artistId,
-        properties: ARTIST_PROPERTIES,
-      });
+      const response = await kodi.call<GetArtistDetailsResponse>(
+        'AudioLibrary.GetArtistDetails',
+        {
+          artistid: artistId,
+          properties: ARTIST_PROPERTIES,
+        },
+        signal
+      );
 
       return response.artistdetails;
     },
     enabled: artistId !== undefined,
-    staleTime: 15 * 60 * 1000, // 15 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
     ...queryOptions,
   });
 }

@@ -126,6 +126,7 @@ export const usePlayerStore = create<PlayerState>()((set) => ({
             year: item.year,
             duration: item.duration,
             file: item.file,
+            thumbnail: item.thumbnail,
           }
         : null,
     });

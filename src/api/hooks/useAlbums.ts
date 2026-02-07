@@ -30,7 +30,7 @@ export function useAlbumsInfinite(options: UseAlbumsInfiniteOptions = {}) {
         signal
       );
       return {
-        albums: response.albums,
+        albums: response.albums ?? [],
         nextCursor: response.limits.total > pageParam + pageSize ? pageParam + pageSize : undefined,
         total: response.limits.total,
       };
@@ -49,17 +49,24 @@ export function useAlbumsInfinite(options: UseAlbumsInfiniteOptions = {}) {
 export function useAlbumsByArtist(artistId: number | undefined) {
   return useQuery({
     queryKey: ['albums', { artistId }],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!artistId) throw new Error('Artist ID is required');
 
-      const response = await kodi.call<GetAlbumsResponse>('AudioLibrary.GetAlbums', {
-        artistid: artistId,
-        properties: ALBUM_LIST_PROPERTIES,
-        sort: { method: 'year', order: 'ascending' },
-      });
+      const response = await kodi.call<GetAlbumsResponse>(
+        'AudioLibrary.GetAlbums',
+        {
+          artistid: artistId,
+          properties: ALBUM_LIST_PROPERTIES,
+          sort: { method: 'year', order: 'ascending' },
+        },
+        signal
+      );
 
-      return response.albums;
+      return response.albums ?? [];
     },
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
     enabled: !!artistId,
   });
 }

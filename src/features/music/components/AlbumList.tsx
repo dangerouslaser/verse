@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { MediaCardSkeletonGrid } from '@/components/media/MediaCardSkeleton';
 import { Input } from '@/components/ui/input';
 import {
@@ -9,12 +9,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { AlbumCard } from './AlbumCard';
 import { AlbumListItem } from './AlbumListItem';
 import { ViewToggle } from '@/components/media/ViewToggle';
 import { useAlbumsInfinite } from '@/api/hooks/useAlbums';
 import { useAlbumFilters } from '../hooks/useAlbumFilters';
 import { useViewMode } from '@/hooks/useViewMode';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useBreadcrumbs } from '@/components/layout/BreadcrumbContext';
 import { Search, Loader2, Disc3, ArrowUp, ArrowDown } from 'lucide-react';
 
@@ -22,7 +25,7 @@ export function AlbumList() {
   const { data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useAlbumsInfinite();
 
-  const observerTarget = useRef<HTMLDivElement>(null);
+  const observerTarget = useInfiniteScroll(fetchNextPage, hasNextPage, isFetchingNextPage);
   const [viewMode, setViewMode] = useViewMode('albums', 'grid');
 
   // Flatten all pages into a single array
@@ -41,33 +44,9 @@ export function AlbumList() {
     setItems([{ label: 'Music' }, { label: 'Albums' }]);
   }, [setItems]);
 
-  // Infinite scroll observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          void fetchNextPage();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const target = observerTarget.current;
-    if (target) {
-      observer.observe(target);
-    }
-
-    return () => {
-      if (target) {
-        observer.unobserve(target);
-      }
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container space-y-4 py-6">
         <div className="mb-6 space-y-4">
           <div className="bg-muted h-10 w-full max-w-md animate-pulse rounded-lg" />
           <div className="bg-muted h-8 w-48 animate-pulse rounded-lg" />
@@ -79,27 +58,20 @@ export function AlbumList() {
 
   if (isError) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="border-destructive bg-destructive/10 rounded-lg border p-6">
-          <h2 className="text-destructive mb-2 text-lg font-semibold">Error loading albums</h2>
-          <p className="text-muted-foreground text-sm">
-            {error instanceof Error ? error.message : 'An unknown error occurred'}
-          </p>
-        </div>
+      <div className="container space-y-4 py-6">
+        <ErrorState title="Error loading albums" error={error} />
       </div>
     );
   }
 
   if (allAlbums.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-muted/50 rounded-lg border p-12 text-center">
-          <Disc3 className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
-          <h2 className="mb-2 text-xl font-semibold">No albums found</h2>
-          <p className="text-muted-foreground">
-            Your music library is empty. Add music to your Kodi library to see it here.
-          </p>
-        </div>
+      <div className="container space-y-4 py-6">
+        <EmptyState
+          title="No albums found"
+          description="Your music library is empty. Add music to your Kodi library to see it here."
+          icon={<Disc3 className="h-12 w-12" />}
+        />
       </div>
     );
   }
@@ -250,10 +222,7 @@ export function AlbumList() {
           </div>
         </>
       ) : (
-        <div className="bg-muted/50 rounded-lg border p-12 text-center">
-          <h2 className="mb-2 text-xl font-semibold">No results found</h2>
-          <p className="text-muted-foreground">Try adjusting your search or filters.</p>
-        </div>
+        <EmptyState title="No results found" description="Try adjusting your search or filters." />
       )}
     </div>
   );

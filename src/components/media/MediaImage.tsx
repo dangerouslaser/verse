@@ -47,14 +47,12 @@ export function MediaImage({
   return (
     <div
       className={cn(
-        'relative overflow-hidden bg-muted',
+        'bg-muted relative overflow-hidden',
         aspectRatioClasses[aspectRatio],
         className
       )}
     >
-      {isLoading && !showPlaceholder && (
-        <div className="absolute inset-0 animate-pulse bg-muted" />
-      )}
+      {isLoading && !showPlaceholder && <div className="bg-muted absolute inset-0 animate-pulse" />}
       <img
         src={imageSrc}
         alt={alt}

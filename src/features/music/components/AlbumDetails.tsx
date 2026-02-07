@@ -4,6 +4,7 @@ import { useAlbumDetails } from '@/api/hooks/useAlbumDetails';
 import { useSongsByAlbum } from '@/api/hooks/useSongs';
 import { usePlaySong } from '@/api/hooks/useMusicPlayback';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorState } from '@/components/ui/ErrorState';
 import { MediaImage } from '@/components/media/MediaImage';
 import { AlbumActions } from './AlbumActions';
 import { AlbumMetadata } from './AlbumMetadata';
@@ -56,7 +57,7 @@ export function AlbumDetails() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container space-y-4 py-6">
         <div className="space-y-6">
           <div className="flex flex-col gap-6 md:flex-row">
             <Skeleton className="aspect-square w-full md:w-64" />
@@ -73,13 +74,12 @@ export function AlbumDetails() {
 
   if (isError || !album) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="border-destructive bg-destructive/10 rounded-lg border p-6">
-          <h2 className="text-destructive mb-2 text-lg font-semibold">Error loading album</h2>
-          <p className="text-muted-foreground text-sm">
-            {error instanceof Error ? error.message : 'Album not found'}
-          </p>
-        </div>
+      <div className="container space-y-4 py-6">
+        <ErrorState
+          title="Error loading album"
+          error={error ?? undefined}
+          message="Album not found"
+        />
       </div>
     );
   }
@@ -105,7 +105,7 @@ export function AlbumDetails() {
       )}
 
       {/* Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container space-y-4 py-6">
         <div className="space-y-6">
           {/* Album info section */}
           <div className="flex flex-col gap-6 md:flex-row">

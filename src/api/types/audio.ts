@@ -88,7 +88,7 @@ export interface KodiSong extends KodiMediaBase {
  * Response from AudioLibrary.GetArtists
  */
 export interface GetArtistsResponse {
-  artists: KodiArtist[];
+  artists?: KodiArtist[];
   limits: {
     start: number;
     end: number;
@@ -107,7 +107,7 @@ export interface GetArtistDetailsResponse {
  * Response from AudioLibrary.GetAlbums
  */
 export interface GetAlbumsResponse {
-  albums: KodiAlbum[];
+  albums?: KodiAlbum[];
   limits: {
     start: number;
     end: number;
@@ -126,7 +126,7 @@ export interface GetAlbumDetailsResponse {
  * Response from AudioLibrary.GetSongs
  */
 export interface GetSongsResponse {
-  songs: KodiSong[];
+  songs?: KodiSong[];
   limits: {
     start: number;
     end: number;

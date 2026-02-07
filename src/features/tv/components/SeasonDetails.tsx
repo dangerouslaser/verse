@@ -11,6 +11,7 @@ import { MediaImage } from '@/components/media/MediaImage';
 import { EpisodeList } from './EpisodeList';
 import { useBreadcrumbs } from '@/components/layout/BreadcrumbContext';
 import { getFanartUrl, getPosterUrl } from '@/lib/image-utils';
+import { ErrorState } from '@/components/ui/ErrorState';
 
 export function SeasonDetails() {
   const { tvshowId, season } = useParams({ strict: false });
@@ -53,10 +54,7 @@ export function SeasonDetails() {
   if (!tvshowId || !season) {
     return (
       <div className="container py-6">
-        <div className="border-destructive bg-destructive/10 rounded-lg border p-6 text-center">
-          <h2 className="text-destructive mb-2 text-lg font-semibold">Error loading season</h2>
-          <p className="text-muted-foreground text-sm">Invalid params.</p>
-        </div>
+        <ErrorState title="Error loading season" message="Invalid params." centered />
       </div>
     );
   }
@@ -82,12 +80,12 @@ export function SeasonDetails() {
   if (isError || !episodes || !tvshow) {
     return (
       <div className="container py-6">
-        <div className="border-destructive bg-destructive/10 rounded-lg border p-6 text-center">
-          <h2 className="text-destructive mb-2 text-lg font-semibold">Error loading season</h2>
-          <p className="text-muted-foreground text-sm">
-            {error instanceof Error ? error.message : 'Season not found'}
-          </p>
-        </div>
+        <ErrorState
+          title="Error loading season"
+          error={error ?? undefined}
+          message="Season not found"
+          centered
+        />
       </div>
     );
   }

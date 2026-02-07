@@ -40,7 +40,7 @@ export function getImageUrl(imagePath?: string): string | undefined {
 
   // If it's a local path, encode it with image:// prefix
   const baseUrl = getKodiBaseUrl();
-  const fullPath = `image://${encodeURIComponent(imagePath)}`;
+  const fullPath = `image://${imagePath}`;
   const encodedPath = encodeURIComponent(fullPath);
   return `${baseUrl}/image/${encodedPath}`;
 }

@@ -8,7 +8,7 @@ import type { PlaylistItem } from '@/api/types/player';
 export function usePlaylist(playlistId: number | undefined) {
   return useQuery({
     queryKey: ['playlist', playlistId],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (playlistId === undefined) {
         throw new Error('Playlist ID is required');
       }
@@ -16,10 +16,14 @@ export function usePlaylist(playlistId: number | undefined) {
       const response = await kodi.call<{
         items?: PlaylistItem[];
         limits: { start: number; end: number; total: number };
-      }>('Playlist.GetItems', {
-        playlistid: playlistId,
-        properties: ['title', 'artist', 'album', 'duration', 'file', 'thumbnail'],
-      });
+      }>(
+        'Playlist.GetItems',
+        {
+          playlistid: playlistId,
+          properties: ['title', 'artist', 'album', 'duration', 'file', 'thumbnail'],
+        },
+        signal
+      );
       return response.items ?? [];
     },
     enabled: playlistId !== undefined,

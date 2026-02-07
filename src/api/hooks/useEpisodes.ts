@@ -1,7 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { kodi } from '../client';
-import type { GetEpisodesResponse, GetEpisodeDetailsResponse, KodiEpisode } from '../types/video';
-import { EPISODE_PROPERTIES } from '../types/video';
+import { kodi } from '@/api/client';
+import type {
+  GetEpisodesResponse,
+  GetEpisodeDetailsResponse,
+  KodiEpisode,
+} from '@/api/types/video';
+import { EPISODE_PROPERTIES } from '@/api/types/video';
 
 /**
  * Fetch episodes for a specific season
@@ -9,19 +13,26 @@ import { EPISODE_PROPERTIES } from '../types/video';
 export function useEpisodesBySeason(tvshowid: number | undefined, season: number | undefined) {
   return useQuery({
     queryKey: ['episodes', tvshowid, season],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!tvshowid) throw new Error('TV show ID is required');
       if (season === undefined) throw new Error('Season number is required');
 
-      const response = await kodi.call<GetEpisodesResponse>('VideoLibrary.GetEpisodes', {
-        tvshowid,
-        season,
-        properties: EPISODE_PROPERTIES,
-        sort: { method: 'episode', order: 'ascending' },
-      });
+      const response = await kodi.call<GetEpisodesResponse>(
+        'VideoLibrary.GetEpisodes',
+        {
+          tvshowid,
+          season,
+          properties: EPISODE_PROPERTIES,
+          sort: { method: 'episode', order: 'ascending' },
+        },
+        signal
+      );
 
-      return response.episodes;
+      return response.episodes ?? [];
     },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
     enabled: !!tvshowid && season !== undefined,
   });
 }
@@ -32,17 +43,24 @@ export function useEpisodesBySeason(tvshowid: number | undefined, season: number
 export function useAllEpisodes(tvshowid: number | undefined) {
   return useQuery({
     queryKey: ['episodes', tvshowid],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!tvshowid) throw new Error('TV show ID is required');
 
-      const response = await kodi.call<GetEpisodesResponse>('VideoLibrary.GetEpisodes', {
-        tvshowid,
-        properties: EPISODE_PROPERTIES,
-        sort: { method: 'episode', order: 'ascending' },
-      });
+      const response = await kodi.call<GetEpisodesResponse>(
+        'VideoLibrary.GetEpisodes',
+        {
+          tvshowid,
+          properties: EPISODE_PROPERTIES,
+          sort: { method: 'episode', order: 'ascending' },
+        },
+        signal
+      );
 
-      return response.episodes;
+      return response.episodes ?? [];
     },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
     enabled: !!tvshowid,
   });
 }
@@ -53,7 +71,7 @@ export function useAllEpisodes(tvshowid: number | undefined) {
 export function useEpisodeDetails(episodeid: number | undefined) {
   return useQuery({
     queryKey: ['episode', episodeid],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!episodeid) throw new Error('Episode ID is required');
 
       const response = await kodi.call<GetEpisodeDetailsResponse>(
@@ -61,11 +79,15 @@ export function useEpisodeDetails(episodeid: number | undefined) {
         {
           episodeid,
           properties: EPISODE_PROPERTIES,
-        }
+        },
+        signal
       );
 
       return response.episodedetails;
     },
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
     enabled: !!episodeid,
   });
 }
