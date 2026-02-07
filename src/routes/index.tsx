@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
-import { Film, Tv, PlayCircle } from 'lucide-react';
+import { Film, Tv } from 'lucide-react';
 import { useBreadcrumbs } from '@/components/layout/BreadcrumbContext';
 import { useLibraryStats } from '@/api/hooks/useDashboard';
 import { StatsCard, StatsGrid } from '@/features/dashboard/components/StatsCard';
@@ -25,13 +25,23 @@ function HomePage() {
       <section>
         <h2 className="mb-4 text-lg font-semibold">Your Library</h2>
         <StatsGrid>
-          <StatsCard icon={Film} label="Movies" value={stats?.movies} isLoading={statsLoading} />
-          <StatsCard icon={Tv} label="TV Shows" value={stats?.tvshows} isLoading={statsLoading} />
           <StatsCard
-            icon={PlayCircle}
-            label="Episodes"
-            value={stats?.episodes}
+            icon={Film}
+            label="Movies"
+            value={stats?.movies}
             isLoading={statsLoading}
+            href="/movies"
+          />
+          <StatsCard
+            icon={Tv}
+            label="TV Shows"
+            value={
+              stats
+                ? `${stats.tvshows.toLocaleString()} shows / ${stats.episodes.toLocaleString()} episodes`
+                : undefined
+            }
+            isLoading={statsLoading}
+            href="/tv"
           />
         </StatsGrid>
       </section>
