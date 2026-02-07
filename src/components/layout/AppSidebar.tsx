@@ -2,25 +2,13 @@
 
 import * as React from 'react';
 import { Link, useLocation } from '@tanstack/react-router';
-import {
-  Film,
-  Tv,
-  Settings,
-  Sun,
-  Moon,
-  Wifi,
-  WifiOff,
-  Music,
-  Disc3,
-  ListMusic,
-  Home,
-  ChevronsUpDown,
-} from 'lucide-react';
+import { Settings, Sun, Moon, Wifi, WifiOff, ChevronsUpDown } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { KodiLogo } from '@/components/icons/KodiLogo';
 import { useKodiConnectionStatus } from '@/api/hooks/useKodiWebSocket';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { type NavItem, useSidebarNavigation } from '@/components/layout/navigation';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   DropdownMenu,
@@ -41,17 +29,8 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
-const navigation = [
-  { title: 'Home', url: '/', icon: Home, exact: true },
-  { title: 'Movies', url: '/movies', icon: Film },
-  { title: 'TV Shows', url: '/tv', icon: Tv },
-  { title: 'Artists', url: '/music', icon: Music },
-  { title: 'Albums', url: '/music/albums', icon: Disc3 },
-  { title: 'Songs', url: '/music/songs', icon: ListMusic },
-];
-
 interface NavButtonProps {
-  item: { title: string; url: string; icon: React.ElementType };
+  item: NavItem;
   isActive: boolean;
   collapsed: boolean;
 }
@@ -180,6 +159,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
 
+  const navigation = useSidebarNavigation();
+
   const toggleTheme = React.useCallback(() => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   }, [theme, setTheme]);
@@ -206,7 +187,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               ? location.pathname === item.url
               : location.pathname.startsWith(item.url);
             return (
-              <NavButton key={item.url} item={item} isActive={isActive} collapsed={collapsed} />
+              <NavButton key={item.id} item={item} isActive={isActive} collapsed={collapsed} />
             );
           })}
         </nav>

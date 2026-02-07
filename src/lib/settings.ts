@@ -6,12 +6,19 @@
 
 const STORAGE_PREFIX = 'verse_';
 
+export interface SidebarNavItem {
+  id: string;
+  visible: boolean;
+}
+
 interface VerseSettings {
   tmdbApiKey: string | null;
+  sidebarNavigation: SidebarNavItem[] | null;
 }
 
 const DEFAULT_SETTINGS: VerseSettings = {
   tmdbApiKey: null,
+  sidebarNavigation: null,
 };
 
 /**
@@ -71,4 +78,18 @@ export function setTmdbApiKey(apiKey: string | null): void {
 export function hasTmdbApiKey(): boolean {
   const key = getTmdbApiKey();
   return key !== null && key.length > 0;
+}
+
+/**
+ * Get sidebar navigation config from settings
+ */
+export function getSidebarNavigation(): SidebarNavItem[] | null {
+  return getSetting('sidebarNavigation');
+}
+
+/**
+ * Set sidebar navigation config in settings
+ */
+export function setSidebarNavigation(items: SidebarNavItem[] | null): void {
+  setSetting('sidebarNavigation', items);
 }

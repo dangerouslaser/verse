@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -19,8 +19,16 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getTmdbApiKey, setTmdbApiKey } from '@/lib/settings';
 import { tmdb } from '@/api/tmdb';
 import { toast } from 'sonner';
+import { useBreadcrumbs } from '@/components/layout/BreadcrumbContext';
+import { SidebarSettings } from '@/features/settings/components/SidebarSettings';
 
 function Settings() {
+  const { setItems } = useBreadcrumbs();
+
+  useEffect(() => {
+    setItems([{ label: 'Settings' }]);
+  }, [setItems]);
+
   // Initialize state directly from localStorage
   const savedKey = getTmdbApiKey();
   const [tmdbKey, setTmdbKey] = useState(savedKey ?? '');
@@ -66,11 +74,6 @@ function Settings() {
 
   return (
     <div className="container mx-auto space-y-6 px-4 py-8">
-      <div>
-        <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground mt-1">Configure Verse preferences and API keys</p>
-      </div>
-
       {/* Kodi Settings */}
       <Card>
         <CardHeader>
@@ -89,6 +92,9 @@ function Settings() {
           </Link>
         </CardContent>
       </Card>
+
+      {/* Sidebar Navigation */}
+      <SidebarSettings />
 
       {/* API Keys Section */}
       <Card>
